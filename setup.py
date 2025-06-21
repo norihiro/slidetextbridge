@@ -14,7 +14,7 @@ setuptools.setup(
         entry_points={
             'console_scripts': [
                 'ppttext-example=ppttextfeed.ppttext:example_loop',
-                'ppttextfeed=ppttextfeed.main:main',
+                'ppttextfeed=ppttextfeed.core.main:main',
             ],
         }
 )
