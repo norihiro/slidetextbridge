@@ -50,6 +50,9 @@ class TextLinebreakFilter(base.PluginBase):
         cfg.add_argment('shape_delimiter', type=str, default='\n')
         cfg.add_argment('line_delimiter', type=str, default='\n')
         cfg.add_argment('strip', type=bool, default=True)
+        cfg.add_argment('split_long_line', type=int, default=0)
+        cfg.add_argment('split_nowrap', type=str, default='.,"\'')
+        cfg.add_argment('split_nowrap_allow_overflow', type=bool, default=True)
         cfg.add_argment('joined_column_max', type=int, default=0)
         cfg.add_argment('join_by', type=str, default=' ')
         cfg.parse(data)
@@ -71,6 +74,12 @@ class TextLinebreakFilter(base.PluginBase):
                     stripped.append(t)
             lines = stripped
 
+        if self.cfg.split_long_line:
+            new_lines = []
+            for line in lines:
+                new_lines += self._split_long_line(line)
+            lines = new_lines
+
         if self.cfg.joined_column_max:
             joined = []
             pending_text = None
@@ -88,6 +97,59 @@ class TextLinebreakFilter(base.PluginBase):
             lines = joined
 
         return self.cfg.line_delimiter.join(lines)
+
+    def _split_long_line(self, text):
+        if self._count_text(text) <= self.cfg.split_long_line:
+            return [text, ]
+        ret = []
+        while text:
+            # Find the length that satisfies `split_long_line`
+            ix = 0
+            ix_cjk = -1
+            ix_space = -1
+            ix_other = -1
+            n = 0
+            allow_overflow = False
+            while (allow_overflow or n <= self.cfg.split_long_line) and ix < len(text):
+                c = text[ix]
+                n += self._count_text(c)
+                allow_overflow = False
+                if c.isspace():
+                    ix_space = ix
+                elif self.cfg.split_nowrap and c in self.cfg.split_nowrap:
+                    if self.cfg.split_nowrap_allow_overflow:
+                        allow_overflow = True
+                elif _is_cjk_char(c):
+                    ix_cjk = ix
+                else:
+                    ix_other = ix
+                ix += 1
+
+            if ix == len(text):
+                ret.append(text)
+                break
+
+            # If there is a space, let's cut at the space.
+            if ix_space > 0 and ix_space > ix_cjk:
+                ret.append(text[:ix_space])
+                text = text[ix_space+1:]
+
+            # If there is a CJK string,
+            elif ix_cjk > 0:
+                ret.append(text[:ix_cjk])
+                text = text[ix_cjk:]
+
+            # If no more option to break
+            elif ix_other > 0:
+                ret.append(text[:ix_other])
+                text = text[ix_other:]
+
+            # The last condition to avoid infinite loop
+            else:
+                ret.append(text)
+                break
+
+        return ret
 
     def _count_text(self, text):
         'Count CJK characters twice'
