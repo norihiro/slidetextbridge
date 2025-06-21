@@ -28,6 +28,10 @@ try:
 except ImportError as e:
     print(f'Info: JMESPath filter is unsupported: {e}')
 
+from . import text_filters
+plugin_classes.append(text_filters.TextLinebreakFilter)
+plugin_classes.append(text_filters.RegexFilter)
+
 from . import debug_helper
 plugin_classes.append(debug_helper.StdoutEmitter)
 
