@@ -170,6 +170,17 @@ class TextLinebreakFilter(base.PluginBase):
         await self.emit(slide)
 
 
+def _parse_patterns(v):
+    cfg = config.ConfigBase()
+    cfg.add_argment('p', type=str)
+    cfg.add_argment('r', type=str)
+    ret = []
+    for pattern in v:
+        cfg.parse(pattern)
+        ret.append((re.compile(cfg.p), cfg.r)) # pylint: disable=E1101
+
+    return ret
+
 class RegexFilter(base.PluginBase):
     '''
     Filter lines with regex
@@ -184,19 +195,19 @@ class RegexFilter(base.PluginBase):
     def config(data):
         cfg = config.ConfigBase()
         base.set_config_arguments(cfg)
-        cfg.add_argment('pattern', type=str)
-        cfg.add_argment('repl', type=str)
+        cfg.add_argment('patterns', conversion=_parse_patterns)
         cfg.parse(data)
         return cfg
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
-        self.pattern_re = re.compile(cfg.pattern)
         self.cfg = cfg
         self.connect_to(cfg.src)
 
     def _filter_shape_text(self, text):
-        lines = [self.pattern_re.sub(self.cfg.repl, t) for t in text.split('\n')]
+        lines = text.split('\n')
+        for p, r in self.cfg.patterns:
+            lines = [p.sub(r, t) for t in lines]
         return '\n'.join(lines)
 
     async def update(self, slide, args):
