@@ -32,7 +32,6 @@ This tool is ideal for:
 
 - Host running presentation tool
   - Microsoft Windows + PowerPoint (desktop version)
-    (Uses COM interface to access the slideshow.)
   - Linux + LibreOffice Impress
 - Host running the streaming
   - OBS Studio 30 or later
