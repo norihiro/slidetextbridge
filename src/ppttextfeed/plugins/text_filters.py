@@ -3,8 +3,8 @@ Filters to modify texts
 '''
 
 import re
-from . import base
 from ppttextfeed.core import config
+from . import base
 
 
 _CJK_RANGES = (
@@ -40,11 +40,11 @@ class TextLinebreakFilter(base.PluginBase):
 
     @classmethod
     def type_name(cls):
-        'Return the name of the type'
         return 'linebreak'
 
     @staticmethod
     def config(data):
+        'Return the config object'
         cfg = config.ConfigBase()
         base.set_config_arguments(cfg)
         cfg.add_argment('shape_delimiter', type=str, default='\n')
@@ -60,7 +60,6 @@ class TextLinebreakFilter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
-        self.cfg = cfg
         self.connect_to(cfg.src)
 
     def _filter_shape_text(self, text):
@@ -99,9 +98,10 @@ class TextLinebreakFilter(base.PluginBase):
         return self.cfg.line_delimiter.join(lines)
 
     def _split_long_line(self, text):
+        # pylint: disable=R0912
         if self._count_text(text) <= self.cfg.split_long_line:
-            return [text, ]
-        ret = []
+            yield text
+
         while text:
             # Find the length that satisfies `split_long_line`
             ix = 0
@@ -126,30 +126,28 @@ class TextLinebreakFilter(base.PluginBase):
                 ix += 1
 
             if ix == len(text):
-                ret.append(text)
+                yield text
                 break
 
             # If there is a space, let's cut at the space.
             if ix_space > 0 and ix_space > ix_cjk:
-                ret.append(text[:ix_space])
+                yield text[:ix_space]
                 text = text[ix_space+1:]
 
             # If there is a CJK string,
             elif ix_cjk > 0:
-                ret.append(text[:ix_cjk])
+                yield text[:ix_cjk]
                 text = text[ix_cjk:]
 
             # If no more option to break
             elif ix_other > 0:
-                ret.append(text[:ix_other])
+                yield text[:ix_other]
                 text = text[ix_other:]
 
             # The last condition to avoid infinite loop
             else:
-                ret.append(text)
+                yield text
                 break
-
-        return ret
 
     def _count_text(self, text):
         'Count CJK characters twice'
@@ -188,11 +186,11 @@ class RegexFilter(base.PluginBase):
 
     @classmethod
     def type_name(cls):
-        'Return the name of the type'
         return 'regex'
 
     @staticmethod
     def config(data):
+        'Return the config object'
         cfg = config.ConfigBase()
         base.set_config_arguments(cfg)
         cfg.add_argment('patterns', conversion=_parse_patterns)
@@ -201,7 +199,6 @@ class RegexFilter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
-        self.cfg = cfg
         self.connect_to(cfg.src)
 
     def _filter_shape_text(self, text):
@@ -225,6 +222,8 @@ class RegexFilter(base.PluginBase):
 
 
 class TextFilteredSlide(base.SlideBase):
+    'The slide class returned by the filters'
+
     def __init__(self, data=None):
         if isinstance(data, list):
             self._dict = {'shapes': data}

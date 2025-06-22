@@ -5,8 +5,8 @@ Get text from Microsoft PowerPoint
 import asyncio
 import win32com.client
 import pywintypes
-from . import base
 from ppttextfeed.core import config
+from . import base
 
 
 class _Const:
@@ -16,33 +16,27 @@ class _Const:
     ppSlideShowDone = 5
 
 
-class PowerPointCaptureConfig(config.ConfigBase):
-    def __init__(self):
-        super().__init__()
-        self.add_argment('placeholder_only', type=bool, default=True)
-        self.add_argment('poll_wait_time', type=float, default=0.1)
-        base.set_config_arguments(self, has_src=False)
-
-
 class PowerPointCapture(base.PluginBase):
     '''
     Get text from Microsoft PowerPoint
     '''
     @classmethod
     def type_name(cls):
-        'Return the name of the type'
         return 'ppt'
 
     @staticmethod
     def config(data):
-        cfg = PowerPointCaptureConfig()
+        'Return the config object'
+        cfg = config.ConfigBase()
+        base.set_config_arguments(cfg, has_src=False)
+        cfg.add_argment('placeholder_only', type=bool, default=True)
+        cfg.add_argment('poll_wait_time', type=float, default=0.1)
         cfg.parse(data)
         return cfg
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
         self._last_slide = self
-        self.cfg = cfg
         self.ppt = None
         self._last_window = None
 
@@ -138,6 +132,8 @@ def _pf_to_dict(pf):
     return base.SlideBase.convert_object(pf, params=('Name', 'Type', 'ContainedType'))
 
 class PowerPointSlide(base.SlideBase):
+    'The slide class returned by PowerPointCapture'
+
     def __init__(self, slide=None, data=None, cfg=None):
         self._slide = slide
         self.cfg = cfg
@@ -161,32 +157,34 @@ class PowerPointSlide(base.SlideBase):
         '''
         if self._dict:
             return _list_texts(self._dict)
-        else:
-            if not self._slide:
-                return ''
-            texts = []
-            for shape in self._slide.Shapes:
-                if not self._shape_is_valid(shape):
-                    continue
-                texts.append(shape.TextFrame.TextRange.Text.replace('\r', ' '))
-            return texts
+
+        if not self._slide:
+            return []
+
+        texts = []
+        for shape in self._slide.Shapes:
+            if not self._shape_is_valid(shape):
+                continue
+            texts.append(shape.TextFrame.TextRange.Text.replace('\r', ' '))
+        return texts
 
     def to_dict(self):
-        if not self._dict:
-            if not self._slide:
-                return {}
-            shapes = []
-            for shape in self._slide.Shapes:
-                if not self._shape_is_valid(shape):
-                    continue
-                s = base.SlideBase.convert_object(shape, params=(
-                    ('TextFrame', _tf_to_dict),
-                    'Type',
-                    ('PlaceholderFormat', _pf_to_dict),
-                    'Name',
-                ))
-                shapes.append(s)
-            self._dict = {'shapes': shapes}
+        if self._dict:
+            return self._dict
+        if not self._slide:
+            return {}
+        shapes = []
+        for shape in self._slide.Shapes:
+            if not self._shape_is_valid(shape):
+                continue
+            s = base.SlideBase.convert_object(shape, params=(
+                ('TextFrame', _tf_to_dict),
+                'Type',
+                ('PlaceholderFormat', _pf_to_dict),
+                'Name',
+            ))
+            shapes.append(s)
+        self._dict = {'shapes': shapes}
         return self._dict
 
 

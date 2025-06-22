@@ -19,7 +19,7 @@ class ConfigBase():
         :param default:    the default value
         '''
         class _Argment:
-            # pylint: disable=W0622
+            # pylint: disable=W0622,R0903
             def __init__(self, name, type=None, conversion=None, default=None):
                 self.name = name
                 self.type = type

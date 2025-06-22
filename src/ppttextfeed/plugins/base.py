@@ -27,6 +27,7 @@ class PluginBase:
 
     def __init__(self, ctx, cfg=None):
         self.ctx = ctx
+        self.cfg = cfg
         self.name = cfg.name
         self.sinks = []
 
@@ -64,11 +65,13 @@ class PluginBase:
         '''
         The callback function when updating the new slide.
         '''
-        pass
 
 
 class SlideBase():
-    def __init__(slide=None, data=None):
+    '''
+    The base class representing the current slide
+    '''
+    def __init__(self, slide=None, data=None):
         pass
 
     def to_texts(self):
@@ -83,12 +86,17 @@ class SlideBase():
 
     @staticmethod
     def convert_object(obj, params=()):
+        '''
+        A helper method to convert an object to dict type.
+        :param params:  List of attributes that will be converted to the dict item.
+        Each element of `params` can be a string or a 2-element tuple.
+        '''
         d = {}
         def _f(attrname, f_conv=None):
             dest = re.sub('(.)([A-Z])', r'\1_\2', attrname).lower()
             try:
                 v = getattr(obj, attrname)
-            except:
+            except: # pylint: disable=W0702
                 return
             if f_conv:
                 v = f_conv(v)
@@ -100,3 +108,11 @@ class SlideBase():
                 _f(p)
         return d
 
+    def to_dict(self):
+        '''
+        Get the dict object so that jmespath can filter it.
+        The jmespath filter will then calls the initializer of the class
+        with a `data` parameter to create a new slide object.
+        :return: dict object representing this object
+        '''
+        return {}

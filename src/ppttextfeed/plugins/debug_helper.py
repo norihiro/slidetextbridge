@@ -4,8 +4,8 @@ Helper classes for debugging
 
 import json
 import sys
-from . import base
 from ppttextfeed.core import config
+from . import base
 
 
 class StdoutEmitter(base.PluginBase):
@@ -14,11 +14,11 @@ class StdoutEmitter(base.PluginBase):
     '''
     @classmethod
     def type_name(cls):
-        'Return the name of the type'
         return 'stdout'
 
     @staticmethod
     def config(data):
+        'Return the config object'
         cfg = config.ConfigBase()
         base.set_config_arguments(cfg)
         cfg.add_argment('page_delimiter', type=str, default='\n\n')
@@ -28,7 +28,6 @@ class StdoutEmitter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
-        self.cfg = cfg
         self.connect_to(cfg.src)
 
     async def update(self, slide, args):

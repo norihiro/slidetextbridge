@@ -28,5 +28,8 @@ class Context:
         return self.instances[-1]
 
     async def initialize_all(self):
+        '''
+        After all the instances are registered, call this method to initialize them.
+        '''
         for inst in self.instances:
             await inst.initialize()

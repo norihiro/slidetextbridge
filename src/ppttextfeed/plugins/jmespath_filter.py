@@ -3,8 +3,8 @@ Filter with JMESPath
 '''
 
 import jmespath
-from . import base
 from ppttextfeed.core import config
+from . import base
 
 
 class JMESPathFilter(base.PluginBase):
@@ -13,11 +13,11 @@ class JMESPathFilter(base.PluginBase):
     '''
     @classmethod
     def type_name(cls):
-        'Return the name of the type'
         return 'jmespath'
 
     @staticmethod
     def config(data):
+        'Return the config object'
         cfg = config.ConfigBase()
         base.set_config_arguments(cfg)
         cfg.add_argment('filter', type=str)
@@ -26,7 +26,6 @@ class JMESPathFilter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
-        self.cfg = cfg
         self.connect_to(cfg.src)
         self.jmespath_filter = jmespath.compile(cfg.filter)
 

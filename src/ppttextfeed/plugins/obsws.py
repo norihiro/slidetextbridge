@@ -3,17 +3,8 @@ Send text to OBS Studio
 '''
 
 import simpleobsws
-from . import base
 from ppttextfeed.core import config
-
-
-class ObsWsEmitterConfig(config.ConfigBase):
-    def __init__(self):
-        super().__init__()
-        self.add_argment('url', type=str, default='ws://localhost:4455/')
-        self.add_argment('password', type=str, default=None)
-        self.add_argment('source_name', type=str, default=None)
-        base.set_config_arguments(self)
+from . import base
 
 
 class ObsWsEmitter(base.PluginBase):
@@ -22,19 +13,22 @@ class ObsWsEmitter(base.PluginBase):
     '''
     @classmethod
     def type_name(cls):
-        'Return the name of the type'
         return 'obsws'
 
     @staticmethod
     def config(data):
-        cfg = ObsWsEmitterConfig()
+        'Return the config object'
+        cfg = config.ConfigBase()
+        base.set_config_arguments(cfg)
+        cfg.add_argment('url', type=str, default='ws://localhost:4455/')
+        cfg.add_argment('password', type=str, default=None)
+        cfg.add_argment('source_name', type=str, default=None)
         cfg.parse(data)
         return cfg
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
         self.ws = None
-        self.cfg = cfg
         self.connect_to(cfg.src)
 
     async def _ws_connect(self):
@@ -44,11 +38,13 @@ class ObsWsEmitter(base.PluginBase):
             self.ws.disconnect()
             self.ws = None
 
-    async def update(self, text, args):
-        if not text:
+    async def update(self, slide, args):
+        if not slide:
             text = ''
-        elif not isinstance(text, str):
-            text = str(text)
+        elif isinstance(slide, str):
+            text = slide
+        else:
+            text = str(slide)
 
         try:
             if not self.ws:

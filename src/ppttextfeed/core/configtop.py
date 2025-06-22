@@ -7,6 +7,7 @@ from ppttextfeed.plugins import plugins
 from .config import ConfigBase
 
 class ConfigTop(ConfigBase):
+    # pylint: disable=R0903
     '''
     The class to hold every configuration
     '''

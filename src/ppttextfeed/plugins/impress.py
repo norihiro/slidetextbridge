@@ -4,14 +4,8 @@ Get text from LibreOffice Impress
 
 import asyncio
 import uno
-from . import base
 from ppttextfeed.core import config
-
-
-class ImpressCaptureConfig(config.ConfigBase):
-    def __init__(self):
-        super().__init__()
-        base.set_config_arguments(self, has_src=False)
+from . import base
 
 
 class ImpressCapture(base.PluginBase):
@@ -20,12 +14,13 @@ class ImpressCapture(base.PluginBase):
     '''
     @classmethod
     def type_name(cls):
-        'Return the name of the type'
         return 'impress'
 
     @staticmethod
     def config(data):
-        cfg = ImpressCaptureConfig()
+        'Return the config object'
+        cfg = config.ConfigBase()
+        base.set_config_arguments(cfg, has_src=False)
         cfg.parse(data)
         return cfg
 
@@ -89,6 +84,8 @@ class ImpressCapture(base.PluginBase):
 
 
 class ImpressSlide(base.SlideBase):
+    'The slide class returned by ImpressCapture'
+
     def __init__(self, slide=None, data=None):
         self._slide = slide
         if isinstance(data, list):
@@ -111,18 +108,21 @@ class ImpressSlide(base.SlideBase):
         return []
 
     def to_dict(self):
-        if not self._dict and self._slide:
-            shapes = []
-            for shape in self._slide:
-                s = base.SlideBase.convert_object(shape, params=(
-                    ('Text', lambda v: v.getString()),
-                    'CharColor',
-                    'CharHeight',
-                    'CharFontName',
-                ))
-                s['text'] = shape.Text.getString()
-                shapes.append(s)
-            self._dict = {'shapes': shapes}
+        if self._dict:
+            return self._dict
+        if not self._slide:
+            return {}
+        shapes = []
+        for shape in self._slide:
+            s = base.SlideBase.convert_object(shape, params=(
+                ('Text', lambda v: v.getString()),
+                'CharColor',
+                'CharHeight',
+                'CharFontName',
+            ))
+            s['text'] = shape.Text.getString()
+            shapes.append(s)
+        self._dict = {'shapes': shapes}
         return self._dict
 
 

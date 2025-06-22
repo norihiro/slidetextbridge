@@ -2,7 +2,14 @@
 Accumulate plugins
 '''
 
+from . import text_filters
+from . import debug_helper
+
 plugin_classes = []
+
+plugin_classes.append(text_filters.TextLinebreakFilter)
+plugin_classes.append(text_filters.RegexFilter)
+plugin_classes.append(debug_helper.StdoutEmitter)
 
 try:
     from . import obsws
@@ -27,12 +34,5 @@ try:
     plugin_classes.append(jmespath_filter.JMESPathFilter)
 except ImportError as e:
     print(f'Info: JMESPath filter is unsupported: {e}')
-
-from . import text_filters
-plugin_classes.append(text_filters.TextLinebreakFilter)
-plugin_classes.append(text_filters.RegexFilter)
-
-from . import debug_helper
-plugin_classes.append(debug_helper.StdoutEmitter)
 
 plugins = {cls.type_name(): cls for cls in plugin_classes}
