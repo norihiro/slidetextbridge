@@ -3,7 +3,7 @@ Send text to OBS Studio
 '''
 
 import simpleobsws
-from ppttextfeed.core import config
+from slidetextbridge.core import config
 from . import base
 
 

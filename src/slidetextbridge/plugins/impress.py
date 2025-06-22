@@ -4,7 +4,7 @@ Get text from LibreOffice Impress
 
 import asyncio
 import uno
-from ppttextfeed.core import config
+from slidetextbridge.core import config
 from . import base
 
 

@@ -3,7 +3,7 @@ Filters to modify texts
 '''
 
 import re
-from ppttextfeed.core import config
+from slidetextbridge.core import config
 from . import base
 
 

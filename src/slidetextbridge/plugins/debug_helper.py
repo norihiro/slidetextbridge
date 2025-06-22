@@ -4,7 +4,7 @@ Helper classes for debugging
 
 import json
 import sys
-from ppttextfeed.core import config
+from slidetextbridge.core import config
 from . import base
 
 

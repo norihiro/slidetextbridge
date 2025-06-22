@@ -5,9 +5,9 @@ Main routine
 import argparse
 import asyncio
 
-from ppttextfeed.plugins import plugins
-from ppttextfeed.core.context import Context
-from ppttextfeed.core import configtop
+from slidetextbridge.plugins import plugins
+from slidetextbridge.core.context import Context
+from slidetextbridge.core import configtop
 
 def _get_args():
     parser = argparse.ArgumentParser()

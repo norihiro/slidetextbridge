@@ -3,7 +3,7 @@ Filter with JMESPath
 '''
 
 import jmespath
-from ppttextfeed.core import config
+from slidetextbridge.core import config
 from . import base
 
 

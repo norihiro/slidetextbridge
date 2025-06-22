@@ -3,7 +3,7 @@ Configuration file reader
 '''
 
 import yaml
-from ppttextfeed.plugins import plugins
+from slidetextbridge.plugins import plugins
 from .config import ConfigBase
 
 class ConfigTop(ConfigBase):

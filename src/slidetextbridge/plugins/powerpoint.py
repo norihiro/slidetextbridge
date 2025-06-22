@@ -5,7 +5,7 @@ Get text from Microsoft PowerPoint
 import asyncio
 import win32com.client
 import pywintypes
-from ppttextfeed.core import config
+from slidetextbridge.core import config
 from . import base
 
 
