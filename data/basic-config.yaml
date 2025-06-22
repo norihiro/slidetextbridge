@@ -1,0 +1,14 @@
+# Configuration file for slidetextbridge
+
+steps:
+  # Retrieves text from Microsoft PowerPoint
+  - type: ppt
+
+  # Just prints the text on console
+  - type: stdout
+
+  # Send the text to OBS Studio
+  - type: obsws
+    url: ws://localhost:4455/
+    password:
+    source_name: 'Text (GDI+)'

@@ -1,0 +1,60 @@
+name: Package
+
+on:
+  push:
+
+env:
+  artifactName: ${{ contains(github.ref_name, '/') && 'artifact' || github.ref_name }}
+
+jobs:
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.13
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller pip-licenses
+
+      - name: pyinstaller
+        shell: pwsh
+        run: |
+          pip install .
+          $PyInstallerArgs = @(
+            '--name', 'slidetextbridge'
+            'src/slidetextbridge/core/main.py'
+          )
+          pyinstaller.exe @PyInstallerArgs
+
+      - name: pip-licenses
+        run: |
+          pip-licenses.exe --from=mixed --format=plain-vertical --with-license-file --no-license-path --output-file dist/slidetextbridge/LICENSES.txt
+
+      - name: datafile
+        run: |
+          copy data/basic-config.yaml dist/slidetextbridge/config.yaml
+
+      - name: archive
+        shell: pwsh
+        run: |
+          cd dist
+          $compress = @{
+            Path = "slidetextbridge\*"
+            DestinationPath = "slidetextbridge.zip"
+            Force = $true
+          }
+          Compress-Archive @compress
+
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.artifactName }}-windows
+          path: dist/slidetextbridge.zip
