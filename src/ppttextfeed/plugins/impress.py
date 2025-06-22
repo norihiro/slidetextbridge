@@ -33,6 +33,8 @@ class ImpressCapture(base.PluginBase):
         super().__init__(ctx=ctx, cfg=cfg)
         self._last_slide = self
         self._desktop = None
+        self._connect_error_reported = False
+        self._get_slide_error_reported = False
 
     async def initialize(self):
         asyncio.create_task(self._loop())
@@ -40,9 +42,28 @@ class ImpressCapture(base.PluginBase):
     async def _loop(self):
         while True:
             if not self._desktop:
-                self._connect()
+                try:
+                    self._connect()
+                    self._connect_error_reported = False
+                except Exception as e: # pylint: disable=W0718
+                    self._desktop = None
+                    if not self._connect_error_reported:
+                        self._connect_error_reported = True
+                        print(f'Error: impress: failed to connect: {e}')
+                    await asyncio.sleep(1)
+                    continue
 
-            slide = self._get_slide()
+            try:
+                slide = self._get_slide()
+                self._get_slide_error_reported = False
+            except Exception as e: # pylint: disable=W0718
+                if not self._get_slide_error_reported:
+                    self._get_slide_error_reported = True
+                    print(f'Error: impress: failed to get slide: {e}')
+                self._desktop = None
+                await asyncio.sleep(1)
+                continue
+
             if slide != self._last_slide:
                 self._last_slide = slide
                 await self.emit(ImpressSlide(slide))
@@ -62,6 +83,8 @@ class ImpressCapture(base.PluginBase):
         c = self._desktop.getCurrentComponent()
         presentation = c.getPresentation()
         controller = presentation.getController()
+        if not controller:
+            return None
         return controller.getCurrentSlide()
 
 
@@ -80,14 +103,15 @@ class ImpressSlide(base.SlideBase):
         '''
         if self._dict:
             return _list_texts(self._dict)
-        else:
+        if self._slide:
             texts = []
             for shape in self._slide:
                 texts.append(shape.Text.getString())
             return texts
+        return []
 
     def to_dict(self):
-        if not self._dict:
+        if not self._dict and self._slide:
             shapes = []
             for shape in self._slide:
                 s = base.SlideBase.convert_object(shape, params=(
