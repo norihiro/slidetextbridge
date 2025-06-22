@@ -21,6 +21,9 @@ class ImpressCapture(base.PluginBase):
         'Return the config object'
         cfg = config.ConfigBase()
         base.set_config_arguments(cfg, has_src=False)
+        cfg.add_argment('host', type=str, default='localhost')
+        cfg.add_argment('port', type=int, default=2002)
+        cfg.add_argment('pipe_name', type=str)
         cfg.parse(data)
         return cfg
 
@@ -69,8 +72,11 @@ class ImpressCapture(base.PluginBase):
         context = uno.getComponentContext()
         resolver = context.ServiceManager.createInstanceWithContext(
                 'com.sun.star.bridge.UnoUrlResolver', context)
-        uno_inst = resolver.resolve(
-                'uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext')
+        if self.cfg.pipe_name:
+            uno_conn = f'uno:pipe,name={self.cfg.pipe_name}'
+        else:
+            uno_conn = f'uno:socket,host={self.cfg.host},port={self.cfg.port}'
+        uno_inst = resolver.resolve(f'{uno_conn};urp;StarOffice.ComponentContext')
         self._desktop = uno_inst.ServiceManager.createInstanceWithContext(
                 'com.sun.star.frame.Desktop', uno_inst)
 
