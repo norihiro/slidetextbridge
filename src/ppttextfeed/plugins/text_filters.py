@@ -164,7 +164,7 @@ class TextLinebreakFilter(base.PluginBase):
             'text': self._filter_shape_text(t),
             'shape_delimiter': self.cfg.shape_delimiter
             } for t in texts]
-        slide = TextFilteredSlide(data={'shapes': shapes})
+        slide = TextFilteredSlide(data={'shapes': shapes}, parent=self)
         await self.emit(slide)
 
 
@@ -217,25 +217,30 @@ class RegexFilter(base.PluginBase):
             shapes = [{
                 'text': self._filter_shape_text(t),
                 } for t in texts]
-            slide = TextFilteredSlide(data={'shapes': shapes})
+            slide = TextFilteredSlide(data={'shapes': shapes}, parent=self)
         await self.emit(slide)
 
 
 class TextFilteredSlide(base.SlideBase):
     'The slide class returned by the filters'
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, parent=None):
         if isinstance(data, list):
             self._dict = {'shapes': data}
         else:
             self._dict = data
+        self.parent = parent
 
     def to_texts(self):
         try:
             if self._dict:
                 return [shape['text'] for shape in self._dict['shapes']]
-        except (TypeError, KeyError):
-            return []
+        except (TypeError, KeyError) as e:
+            if self.parent:
+                print(f'Error: {self.parent.type_name()}({self.parent.cfg.location}): {e}')
+            else:
+                print(f'Error: {e}')
+        return []
 
     def __str__(self):
         ret = ''

@@ -44,7 +44,7 @@ class ImpressCapture(base.PluginBase):
                     self._desktop = None
                     if not self._connect_error_reported:
                         self._connect_error_reported = True
-                        print(f'Error: impress: failed to connect: {e}')
+                        print(f'Error: impress({self.cfg.location}): failed to connect: {e}')
                     await asyncio.sleep(1)
                     continue
 
@@ -54,7 +54,7 @@ class ImpressCapture(base.PluginBase):
             except Exception as e: # pylint: disable=W0718
                 if not self._get_slide_error_reported:
                     self._get_slide_error_reported = True
-                    print(f'Error: impress: failed to get slide: {e}')
+                    print(f'Error: impress({self.cfg.location}): failed to get slide: {e}')
                 self._desktop = None
                 await asyncio.sleep(1)
                 continue

@@ -2,12 +2,15 @@
 Configuration data structure
 '''
 
+_LIB_KEYS = ('_location', )
+
 class ConfigBase():
     '''
     Base class to hold configuration data
     '''
     def __init__(self):
         self.argtypes = []
+        self.location = None
 
     def add_argment(self, *args, **kwargs):
         '''
@@ -32,14 +35,17 @@ class ConfigBase():
         Parse the dictionary data and set attributes
         :param d:  data
         '''
+        self.location = d['_location']
         for key in d.keys():
+            if key in _LIB_KEYS:
+                continue
             found = False
             for a in self.argtypes:
                 if a.name == key:
                     found = True
                     break
             if not found:
-                raise KeyError(f'{key} is undefined')
+                raise KeyError(f'{self.location}: {key} is undefined')
         for a in self.argtypes:
             if a.name in d:
                 v = d[a.name]

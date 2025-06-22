@@ -54,8 +54,8 @@ class ObsWsEmitter(base.PluginBase):
                 'inputName': self.cfg.source_name,
                 'inputSettings': {'text': text}
             })
-        except Exception as e:
-            print(f'Error: {e}')
+        except Exception as e: # pylint: disable=W0718
+            print(f'Error: obsws({self.cfg.location}): {e}')
 
     async def _send_request(self, req, data, retry=2):
         while retry > 0:

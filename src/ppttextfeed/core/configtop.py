@@ -30,8 +30,19 @@ def load(filename):
     Load the config file in YAML
     :param filename: The file name to read
     '''
+
+    class _LoaderWithLineNumber(yaml.SafeLoader): # pylint: disable=R0901
+        _filename = filename
+        def construct_mapping(self, node, deep=False):
+            mapping = super().construct_mapping(node, deep=deep)
+            location = f'{self._filename}:{node.start_mark.line+1}'
+            if node.start_mark.line != node.end_mark.line:
+                location += f'-{node.end_mark.line+1}'
+            mapping['_location'] = location
+            return mapping
+
     with open(filename, 'r', encoding='utf8') as fr:
-        d = yaml.safe_load(fr)
+        d = yaml.load(fr, Loader=_LoaderWithLineNumber)
 
     cfgs = ConfigTop()
     cfgs.parse(d)
