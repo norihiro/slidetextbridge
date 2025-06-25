@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Filter Step: linebreak &#8212; slidetextbridge  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Filter Step: regex" href="regex.html" />
+    <link rel="prev" title="Filter Step: jmespath" href="jmespath.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            <div class="language-selector">
+              <ul>
+                
+              </ul>
+            </div>
+            
+  <section id="filter-step-linebreak">
+<h1>Filter Step: <cite>linebreak</cite><a class="headerlink" href="#filter-step-linebreak" title="Link to this heading">¶</a></h1>
+<p>This step helps to adjust line breaks.</p>
+<ul class="simple">
+<li><p><strong>type: linebreak</strong></p></li>
+</ul>
+<p><strong>Parameters:</strong></p>
+<p>These parameters control how to concatinate shapes and lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">shape_delimiter (string, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Delimiter when concatinating shapes. Default is <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
+</dd>
+<dt class="field-even">line_delimiter (string, optional)<span class="colon">:</span></dt>
+<dd class="field-even"><p>Delimiter when concatinating lines in a shape. Default is <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
+</dd>
+<dt class="field-odd">strip (boolean, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Before concatinating lines, strip leading and trailing spaces from each line. Default is true.</p>
+</dd>
+</dl>
+<p>For example, if you want to get multiple lines into one, set <code class="docutils literal notranslate"><span class="pre">line_delimiter</span></code> to <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code> (just a space).</p>
+<p>These parameters control splitting a line and joining lines.
+Ideal target languages are CJK (Chinese, Japanese, and Korean).</p>
+<dl class="field-list simple">
+<dt class="field-odd">split_long_line (integer, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Threshold number when splitting a long line. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>, do not split.</p>
+</dd>
+<dt class="field-even">split_nowrap (string, optional)<span class="colon">:</span></dt>
+<dd class="field-even"><p>Characters that the split should not happen just before them. Set punctuations in your language. Default is <code class="docutils literal notranslate"><span class="pre">.,&quot;'</span></code>.</p>
+</dd>
+<dt class="field-odd">split_nowrap_allow_overflow (boolean, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>When a character in <code class="docutils literal notranslate"><span class="pre">split_nowrap</span></code> is overflowing, the option controls the overflow is allowed or not. Default is true.</p>
+</dd>
+<dt class="field-even">joined_column_max (integer, optional)<span class="colon">:</span></dt>
+<dd class="field-even"><p>Threshold number when joining short lines. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>, do not join.</p>
+</dd>
+<dt class="field-odd">join_by (string, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Delimiter when joining short lines. Default is a space <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code>.</p>
+</dd>
+</dl>
+<p><strong>Order of process:</strong></p>
+<p>The texts are processed in the order described below.</p>
+<ol class="arabic simple">
+<li><p>Split long lines.</p></li>
+<li><p>Join short lines.</p></li>
+<li><p>Concatinate lines in each shape.</p></li>
+<li><p>Concatinate shapes.</p></li>
+</ol>
+<p><strong>YAML Example:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ppt</span>
+
+<span class="w">  </span><span class="c1"># Adjust line breaks</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linebreak</span>
+<span class="w">    </span><span class="nt">shape_delimiter</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;\n&#39;</span>
+<span class="w">    </span><span class="nt">line_delimiter</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;</span><span class="nv"> </span><span class="s">&#39;</span>
+<span class="w">    </span><span class="nt">strip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># This step prints the result</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stdout</span>
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">slidetextbridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration File Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Step Types</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ppt.html">Input Step: <cite>ppt</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="impress.html">Input Step: <cite>impress</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jmespath.html">Filter Step: <cite>jmespath</cite></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Filter Step: <cite>linebreak</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="regex.html">Filter Step: <cite>regex</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdout.html">Filter Step: <cite>stdout</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="obsws.html">Output Step: <cite>obsws</cite></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Step Types</a><ul>
+      <li>Previous: <a href="jmespath.html" title="previous chapter">Filter Step: <cite>jmespath</cite></a></li>
+      <li>Next: <a href="regex.html" title="next chapter">Filter Step: <cite>regex</cite></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Norihiro Kamae.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/plugins/linebreak.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
