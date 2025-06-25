@@ -101,6 +101,7 @@ class TextLinebreakFilter(base.PluginBase):
         # pylint: disable=R0912
         if self._count_text(text) <= self.cfg.split_long_line:
             yield text
+            return
 
         while text:
             # Find the length that satisfies `split_long_line`
