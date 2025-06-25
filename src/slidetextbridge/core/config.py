@@ -35,7 +35,7 @@ class ConfigBase():
         Parse the dictionary data and set attributes
         :param d:  data
         '''
-        self.location = d['_location']
+        self.location = d['_location'] if '_location' in d else None
         for key in d.keys():
             if key in _LIB_KEYS:
                 continue
