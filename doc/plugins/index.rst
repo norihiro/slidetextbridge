@@ -21,3 +21,4 @@ Step Types
    :caption: Outputs
 
    obsws
+   webserver

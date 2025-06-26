@@ -2,3 +2,4 @@ pywin32; platform_system=='Windows'
 pyyaml
 jmespath
 simpleobsws
+aiohttp

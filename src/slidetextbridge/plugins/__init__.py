@@ -35,4 +35,10 @@ try:
 except ImportError as e:
     print(f'Info: JMESPath filter is unsupported: {e}')
 
+try:
+    from . import webserver
+    plugin_classes.append(webserver.WebServerEmitter)
+except ImportError as e:
+    print(f'Info: Web server is unsupported: {e}')
+
 plugins = {cls.type_name(): cls for cls in plugin_classes}
