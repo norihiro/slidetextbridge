@@ -59,7 +59,9 @@ run this program on the computer running PowerPoint or Impress.
 
 Footnote: You may start this tool either earlier or later than starting the presentation tool.
 
-## Example config for OBS Studio
+## Example Config
+
+### For OBS Studio
 
 ```yaml
 steps:
@@ -70,7 +72,7 @@ steps:
     source_name: 'Text (GDI+)'
 ```
 
-## Example config for Web Browser Output
+### For Web Browser Output
 
 ```yaml
 steps:
@@ -81,3 +83,8 @@ steps:
 ```
 
 Open `http://127.0.0.1:8080/` (or use your computer's IP address) on your browser.
+
+## Learn More
+
+- [Getting Started](https://norihiro.github.io/slidetextbridge/doc/getting-started.html)
+- [Gallery](https://github.com/norihiro/slidetextbridge/wiki/Gallery)
