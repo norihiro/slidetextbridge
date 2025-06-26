@@ -2,6 +2,12 @@ name: Package
 
 on:
   push:
+    branches: ['*']
+    tags: ['*']
+    paths-ignore:
+      - '**.md'
+      - 'doc/**'
+      - 'test/**'
 
 env:
   artifactName: ${{ contains(github.ref_name, '/') && 'artifact' || github.ref_name }}
