@@ -24,6 +24,7 @@ class ImpressCapture(base.PluginBase):
         cfg.add_argment('host', type=str, default='localhost')
         cfg.add_argment('port', type=int, default=2002)
         cfg.add_argment('pipe_name', type=str)
+        cfg.add_argment('poll_wait_time', type=float, default=0.1)
         cfg.parse(data)
         return cfg
 
@@ -66,7 +67,7 @@ class ImpressCapture(base.PluginBase):
                 self._last_slide = slide
                 await self.emit(ImpressSlide(slide))
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(self.cfg.poll_wait_time)
 
     def _connect(self):
         context = uno.getComponentContext()
@@ -82,6 +83,8 @@ class ImpressCapture(base.PluginBase):
 
     def _get_slide(self):
         c = self._desktop.getCurrentComponent()
+        if not c:
+            return None
         presentation = c.getPresentation()
         controller = presentation.getController()
         if not controller:
