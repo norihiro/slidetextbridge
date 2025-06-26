@@ -5,13 +5,22 @@ import argparse
 import json
 
 _HEADER_KEY_PAIRS = (
-        ('File', None, '`{}`'),
+        ('File', None),
         ('Stmts', 'num_statements'),
+        ('Miss', 'missing_lines'),
         ('Cover', 'percent_covered', '{:.0f}%'),
 )
 
 def _list_to_row(v):
     return '| ' + ' | '.join(v) + ' |'
+
+def _value(p, summary, file):
+    v = summary[p[1]] if p[1] else file
+    if len(p) == 2:
+        return f'{v}'
+    if len(p) == 3:
+        return p[2].format(v)
+    raise ValueError(f'Unsupported size of p = {p}')
 
 def create_md_table(data) -> str:
     '''
@@ -26,18 +35,15 @@ def create_md_table(data) -> str:
 
     for file, stats in data["files"].items():
         summary = stats['summary']
-        # pylint: disable=W0640,R1710
-        def _value(p):
-            v = summary[p[1]] if p[1] else file
-            if len(p) == 2:
-                return f'{v}'
-            if len(p) == 3:
-                return p[2].format(v)
-        lines.append(_list_to_row([_value(p) for p in _HEADER_KEY_PAIRS]))
+        lines.append(_list_to_row([_value(p, summary, f'`{file}`') for p in _HEADER_KEY_PAIRS]))
+
+    totals = data['totals']
+    lines.append(_list_to_row([_value(p, totals, '*Total*') for p in _HEADER_KEY_PAIRS]))
 
     return '\n'.join(lines)
 
-if __name__ == '__main__':
+def main():
+    'The main routine'
     parser = argparse.ArgumentParser()
     parser.add_argument('coverage_json', action='store', default='coverage.json')
     args = parser.parse_args()
@@ -46,3 +52,6 @@ if __name__ == '__main__':
         data = json.load(fr)
 
     print(create_md_table(data))
+
+if __name__ == '__main__':
+    main()
