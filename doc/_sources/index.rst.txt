@@ -1,13 +1,14 @@
 Slide Text Bridge
 =================
 
-Welcome to ``slidetextbridge``!
-This tool acts as a bridge,
-sending presentation text from sources like Microsoft PowerPoint to live-streaming software such as OBS Studio.
-This allows you to update on-screen text overlays in your live streams directly from your presentation notes or slides.
+Key Features
+------------
 
-This document will guide you through the initial setup and provide a comprehensive reference for the configuration file.
-
+* Capture live slideshow text from Microsoft PowerPoint and LibreOffice Impress
+* Powerful filters such as JMESPath filter selecting by meta-data,
+  line break adjustment,
+  text replacement by regular expression.
+* Send text to live streaming applications such as OBS Studio and vMix.
 
 Contents
 --------
