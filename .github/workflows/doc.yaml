@@ -1,0 +1,55 @@
+name: Deploy documents
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'doc/**'
+      - '.github/workflows/doc.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install sphinx
+
+      - name: Build HTML files
+        run: |
+          rm -rf gh-pages/doc
+          sphinx-build -b html doc/ gh-pages/doc/
+
+      - name: upload
+        run: |
+          set -e
+          h=$(git log -1 --format='%h')
+
+          cd gh-pages
+
+          if git status | grep 'nothing to commit'; then
+            exit 0
+          fi
+
+          git config --global user.email '780600+norihiro@users.noreply.github.com'
+          git config --global user.name 'github-actions[bot]'
+
+          git add doc/
+          git commit -m "doc: Generated from $h"
+
+          git push
