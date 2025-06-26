@@ -11,6 +11,7 @@ It is designed to be an input source, meaning it's usually the first step in the
 :host (string, optional): Set the host name communicate with. Default is ``localhost``.
 :port (integer, optional): Set the port number that LibreOffice is listening on. Default is ``2002``.
 :pipe_name (string, optional): Set the pipe name that LibreOffice is waiting. Default is unset.
+:poll_wait_time (float, optional): Set the wait time for each polling in seconds. 0.1 seconds by default.
 
 Connecting with socket
   Usually, you don't need to specify any parameters in the configuration file.
@@ -22,6 +23,7 @@ Connecting with socket
        - type: impress
          host: localhost
          port: 2002
+         poll_wait_time: 0.1
 
   To use the socket, start libreoffice like below.
 
@@ -39,6 +41,7 @@ Connecting with pipe
      steps:
        - type: impress
          pipe_name: slidetextbridge_pipe
+         poll_wait_time: 0.1
 
   To use the pipe, start libreoffice like below.
 
