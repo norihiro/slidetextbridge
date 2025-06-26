@@ -114,15 +114,19 @@ class WebServerEmitter(base.PluginBase):
                 .replace('{uri_style}', self.cfg.uri_style)
 
     async def _handle_index(self, request):
+        # pylint: disable=unused-argument
         return web.Response(text=self._fmt(self.cfg.index_html), content_type='text/html')
 
     async def _handle_script(self, request):
+        # pylint: disable=unused-argument
         return web.Response(text=self._fmt(self.cfg.script_js), content_type='text/javascript')
 
     async def _handle_style(self, request):
+        # pylint: disable=unused-argument
         return web.Response(text=self._fmt(self.cfg.style_css), content_type='text/css')
 
     async def _handle_ws(self, request):
+        # pylint: disable=unused-argument
         ws = web.WebSocketResponse()
         await ws.prepare(request)
         self.clients.add(ws)
@@ -131,8 +135,10 @@ class WebServerEmitter(base.PluginBase):
             await ws.send_str(self._last_text)
 
         try:
-            async for msg in ws:
+            async for _ in ws:
                 pass
+        except Exception as e: # pylint: disable=W0718
+            print(f'Error: Failed to process ws message: {e}')
         finally:
             self.clients.discard(ws)
 
@@ -164,5 +170,5 @@ class WebServerEmitter(base.PluginBase):
         for ws in self.clients:
             try:
                 await ws.send_str(text)
-            except Exception as e:
+            except Exception as e: # pylint: disable=W0718
                 print(f'Warning: Failed to send text: {e}')
