@@ -74,17 +74,19 @@ Running the Program
 
 **Downloaded from the release page:**
 
-If you have downloaded the ZIP file from the release page,
-1. Ensure ``config.yaml`` is located at the same directory of ``slidetextbridge.exe``.
-2. Double-click ``slidetextbridge.exe``.
-3. That's it, a console window will appear.
+  If you have downloaded the ZIP file from the release page,
+
+  1. Ensure ``config.yaml`` is located at the same directory of ``slidetextbridge.exe``.
+  2. Double-click ``slidetextbridge.exe``.
+  3. That's it, a console window will appear.
 
 **Downloaded from PyPI:**
 
-If you have installed using ``pip``,
-.. code-block:: bash
+  If you have installed using ``pip``,
 
-   slidetextbridge -c config.yaml
+  .. code-block:: bash
+
+     slidetextbridge -c config.yaml
 
 Now, when you change slides in PowerPoint, the text from the new slide's should appear in the specified OBS text source or in your browser,
 depending on your configuration.
