@@ -22,6 +22,9 @@ locale_dirs = ['_locale/']
 
 root_doc = 'index'
 
+html_copy_source = False
+html_show_copyright = False
+
 gettext_compact = True
 
 # -- Options for HTML output -------------------------------------------------
