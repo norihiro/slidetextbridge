@@ -63,22 +63,28 @@ This setup reads text from the placeholder shapes of the current slide in PowerP
        password: 'your_password_here'  # Password for the OBS WebSocket server (leave blank if none).
        source_name: 'Live Text'        # The name of the Text (GDI+) or (Freetype 2) source in OBS Studio.
 
+     # # Step 3: Optionaly, you may use web server for vMix, etc.
+     # - type: webserver
+     #   host: 0.0.0.0                   # Host address the server will listen on. 0.0.0.0 for all.
+     #   port: 8080                      # Host port the server will listen on.
+
 
 Running the Program
 -------------------
 
-**Donwloaded from the release page:**
+**Downloaded from the release page:**
 
 If you have downloaded the ZIP file from the release page,
 1. Ensure ``config.yaml`` is located at the same directory of ``slidetextbridge.exe``.
 2. Double-click ``slidetextbridge.exe``.
 3. That's it, a console window will appear.
 
-**Donwloaded from PyPI:**
+**Downloaded from PyPI:**
 
 If you have installed using ``pip``,
 .. code-block:: bash
 
    slidetextbridge -c config.yaml
 
-Now, when you change slides in PowerPoint, the text from the new slide's should appear in the specified OBS text source.
+Now, when you change slides in PowerPoint, the text from the new slide's should appear in the specified OBS text source or in your browser,
+depending on your configuration.

@@ -12,3 +12,9 @@ steps:
     url: ws://localhost:4455/
     password:
     source_name: 'Text (GDI+)'
+
+  # # Host the text for browsers
+  # # Remove `obsws` section before using this section.
+  # - type: webserver
+  #   host: 0.0.0.0
+  #   port: 8080
