@@ -3,6 +3,7 @@ Helper classes for debugging
 '''
 
 import json
+import logging
 import sys
 from slidetextbridge.core import config
 from . import base
@@ -28,6 +29,7 @@ class StdoutEmitter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
+        self.logger = logging.getLogger(f'stdout({self.cfg.location})')
         self.connect_to(cfg.src)
 
     async def update(self, slide, args):
@@ -41,6 +43,6 @@ class StdoutEmitter(base.PluginBase):
 
             sys.stdout.write(f'{text}{self.cfg.page_delimiter}')
         except Exception as e:
-            print(f'Error: stdout({self.cfg.location}): {e}')
+            self.logger.error('%s', e)
 
         await self.emit(slide)
