@@ -8,6 +8,7 @@ Step Types
 
    ppt
    impress
+   openlp
 
 .. toctree::
    :caption: Filters

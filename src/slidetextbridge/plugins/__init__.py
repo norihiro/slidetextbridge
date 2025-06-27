@@ -30,6 +30,12 @@ except ImportError as e:
     print(f'Info: LibreOffice is unsupported: {e}')
 
 try:
+    from . import openlp
+    plugin_classes.append(openlp.OpenLPCapture)
+except ImportError as e:
+    print(f'Info: OpenLP is unsupported: {e}')
+
+try:
     from . import jmespath_filter
     plugin_classes.append(jmespath_filter.JMESPathFilter)
 except ImportError as e:
