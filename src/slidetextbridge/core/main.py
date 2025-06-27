@@ -4,6 +4,7 @@ Main routine
 
 import argparse
 import asyncio
+import logging
 
 from slidetextbridge.plugins import plugins
 from slidetextbridge.core.context import Context
@@ -12,6 +13,7 @@ from slidetextbridge.core import configtop
 def _get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', action='store', default='config.yaml')
+    parser.add_argument('--strict', action='store_true')
     return parser.parse_args()
 
 def _setup_ctx(cfgs):
@@ -29,6 +31,7 @@ async def _loop(ctx):
 
 def main():
     'The entry point'
+    logging.basicConfig(level=logging.INFO)
     args = _get_args()
     cfgs = configtop.load(args.config)
     ctx = _setup_ctx(cfgs)
