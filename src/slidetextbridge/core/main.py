@@ -6,7 +6,6 @@ import argparse
 import asyncio
 import logging
 
-from slidetextbridge.plugins import plugins
 from slidetextbridge.core.context import Context
 from slidetextbridge.core import configtop
 
@@ -18,8 +17,9 @@ def _get_args():
 
 def _setup_ctx(cfgs):
     ctx = Context()
+    from slidetextbridge.plugins import accumulate # pylint: disable=C0415
     for step in cfgs.steps:
-        cls = plugins[step.type]
+        cls = accumulate.plugins[step.type]
         inst = cls(ctx=ctx, cfg=step)
         ctx.add_instance(inst)
     return ctx
@@ -39,7 +39,7 @@ def main():
     try:
         asyncio.run(_loop(ctx))
     except KeyboardInterrupt:
-        pass
+        logging.getLogger(__name__).info('Interrupted')
 
 if __name__ == '__main__':
     main()

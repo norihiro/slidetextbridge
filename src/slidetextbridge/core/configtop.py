@@ -3,7 +3,6 @@ Configuration file reader
 '''
 
 import yaml
-from slidetextbridge.plugins import plugins
 from .config import ConfigBase
 
 class ConfigTop(ConfigBase):
@@ -17,9 +16,10 @@ class ConfigTop(ConfigBase):
 
     @staticmethod
     def _steps_converter(data):
+        from slidetextbridge.plugins import accumulate # pylint: disable=C0415
         ret = []
         for d in data:
-            cls = plugins[d['type']]
+            cls = accumulate.plugins[d['type']]
             cfg = cls.config(d)
             ret.append(cfg)
         return ret
