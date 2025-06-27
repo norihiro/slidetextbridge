@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'slidetextbridge'
+project = 'Slide Text Bridge'
 copyright = '2025, Norihiro Kamae'
 author = 'Norihiro Kamae'
 language = 'en'
@@ -24,6 +24,12 @@ root_doc = 'index'
 
 html_copy_source = False
 html_show_copyright = False
+html_theme_options = {
+        'extra_nav_links': {
+            'Gallery': 'https://github.com/norihiro/slidetextbridge/wiki/Gallery',
+            'Source Code': 'https://github.com/norihiro/slidetextbridge/',
+        },
+}
 
 gettext_compact = True
 

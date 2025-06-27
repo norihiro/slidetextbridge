@@ -17,7 +17,7 @@ No text appears in OBS
 - Double-check the `source_name` field in your configuration file.
 - Open OBS and ensure the text source is visible in the active scene.
 - Make sure PowerPoint is open and running the slideshow (not just editing mode).
-- Verify that OBS WebSocket is enabled (see `Tools → WebSocket Server Settings`).
+- Verify that OBS WebSocket is enabled (see `Tools` / `WebSocket Server Settings`).
 
 OBS connection failed
 ---------------------
@@ -65,7 +65,7 @@ Text does not update when slides change
 - Wait until the transition finishes if using animations.
 - Add `stdout` step to verify whether the slide is detected correctly.
 
-Program window doesn’t appear
+Program window doesn't appear
 -----------------------------
 
 **Possible cause:**
