@@ -54,7 +54,7 @@ class ObsWsEmitter(base.PluginBase):
                 'inputName': self.cfg.source_name,
                 'inputSettings': {'text': text}
             })
-        except Exception as e: # pylint: disable=W0718
+        except Exception as e:
             print(f'Error: obsws({self.cfg.location}): {e}')
 
     async def _send_request(self, req, data, retry=2):
@@ -64,7 +64,7 @@ class ObsWsEmitter(base.PluginBase):
                 res = await self.ws.call(simpleobsws.Request(req, data))
                 if res.ok():
                     return res.responseData
-            except Exception as e: # pylint: disable=W0718
+            except Exception as e:
                 try:
                     await self.ws.disconnect()
                 except: # pylint: disable=W0702

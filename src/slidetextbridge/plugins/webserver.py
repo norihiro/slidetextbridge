@@ -137,7 +137,7 @@ class WebServerEmitter(base.PluginBase):
         try:
             async for _ in ws:
                 pass
-        except Exception as e: # pylint: disable=W0718
+        except Exception as e:
             print(f'Error: Failed to process ws message: {e}')
         finally:
             self.clients.discard(ws)
@@ -170,5 +170,5 @@ class WebServerEmitter(base.PluginBase):
         for ws in self.clients:
             try:
                 await ws.send_str(text)
-            except Exception as e: # pylint: disable=W0718
+            except Exception as e:
                 print(f'Warning: Failed to send text: {e}')

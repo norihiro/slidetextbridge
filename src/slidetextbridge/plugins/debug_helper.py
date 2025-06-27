@@ -40,7 +40,7 @@ class StdoutEmitter(base.PluginBase):
                 text = str(slide)
 
             sys.stdout.write(f'{text}{self.cfg.page_delimiter}')
-        except Exception as e: # pylint: disable=W0718
+        except Exception as e:
             print(f'Error: stdout({self.cfg.location}): {e}')
 
         await self.emit(slide)

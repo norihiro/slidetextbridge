@@ -44,7 +44,7 @@ class ImpressCapture(base.PluginBase):
                 try:
                     self._connect()
                     self._connect_error_reported = False
-                except Exception as e: # pylint: disable=W0718
+                except Exception as e:
                     self._desktop = None
                     if not self._connect_error_reported:
                         self._connect_error_reported = True
@@ -55,7 +55,7 @@ class ImpressCapture(base.PluginBase):
             try:
                 slide = self._get_slide()
                 self._get_slide_error_reported = False
-            except Exception as e: # pylint: disable=W0718
+            except Exception as e:
                 if not self._get_slide_error_reported:
                     self._get_slide_error_reported = True
                     print(f'Error: impress({self.cfg.location}): failed to get slide: {e}')

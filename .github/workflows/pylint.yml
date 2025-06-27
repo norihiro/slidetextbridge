@@ -32,5 +32,5 @@ jobs:
         run: |
           pylint \
             --ignored-modules=win32com,pywintypes,uno \
-            --disable=R0801 \
+            --disable=W0718,R0801 \
             src/
