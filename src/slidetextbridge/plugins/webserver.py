@@ -2,6 +2,7 @@
 Send text through HTTP
 '''
 
+import logging
 from aiohttp import web
 from slidetextbridge.core import config
 from . import base
@@ -103,6 +104,7 @@ class WebServerEmitter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
+        self.logger = logging.getLogger(f'webserver({self.cfg.location})')
         self.app = None
         self.clients = set()
         self._last_text = None
@@ -127,21 +129,23 @@ class WebServerEmitter(base.PluginBase):
 
     async def _handle_ws(self, request):
         # pylint: disable=unused-argument
-        ws = web.WebSocketResponse()
-        await ws.prepare(request)
-        self.clients.add(ws)
-
-        if self._last_text:
-            await ws.send_str(self._last_text)
-
+        self.logger.info('Starting %s remote=%s', request.rel_url, request.remote)
         try:
+            ws = web.WebSocketResponse()
+            await ws.prepare(request)
+            self.clients.add(ws)
+
+            if self._last_text:
+                await self._send_text(ws, self._last_text)
+
             async for _ in ws:
                 pass
         except Exception as e:
-            print(f'Error: Failed to process ws message: {e}')
+            self.logger.error('%s: Failed to process ws message. %s', request.remote, e)
         finally:
             self.clients.discard(ws)
 
+        self.logger.info('Closing %s remote=%s', request.rel_url, request.remote)
         return ws
 
     async def initialize(self):
@@ -157,6 +161,7 @@ class WebServerEmitter(base.PluginBase):
         await runner.setup()
         site = web.TCPSite(runner, self.cfg.host, self.cfg.port)
         await site.start()
+        self.logger.info('Listening on %s:%d', self.cfg.host, self.cfg.port)
 
     async def update(self, slide, args):
         if not slide:
@@ -168,7 +173,10 @@ class WebServerEmitter(base.PluginBase):
 
         self._last_text = text
         for ws in self.clients:
-            try:
-                await ws.send_str(text)
-            except Exception as e:
-                print(f'Warning: Failed to send text: {e}')
+            await self._send_text(ws, text)
+
+    async def _send_text(self, ws, text):
+        try:
+            await ws.send_str(text)
+        except Exception as e:
+            self.logger.warning('Failed to send text to ws. %s', e)
