@@ -3,8 +3,7 @@ from unittest.mock import MagicMock, AsyncMock
 
 from slidetextbridge.plugins import text_filters
 
-def make_slide(texts):
-    return text_filters.TextFilteredSlide([{'text': t} for t in texts])
+from test.filter_helper import *
 
 class TestTextFiltersJa(unittest.IsolatedAsyncioTestCase):
 
@@ -22,7 +21,8 @@ class TestTextFiltersJa(unittest.IsolatedAsyncioTestCase):
         slide = make_slide([
             'そのとき、イエスは言われた、「父よ、彼らをおゆるしください。彼らは何をしているのか、わからずにいるのです」。'
             + '人々はイエスの着物をくじ引きで分け合った。\n'
-            + '民衆は立って見ていた。'
+            + '民衆は立って見ていた。',
+            '。' * 28,
             ])
 
         await filter_obj.update(slide, args=None)
@@ -34,7 +34,7 @@ class TestTextFiltersJa(unittest.IsolatedAsyncioTestCase):
             'ださい。彼らは何をしているのか、わからずにいるのです」。',
             '人々はイエスの着物をくじ引きで分け合った。',
             '民衆は立って見ていた。'
-            ))])
+            )), '。' * 28])
 
         # Check the punctuation won't overflow by wrapping at previous char.
         filter_obj.cfg.split_nowrap_allow_overflow = False
@@ -49,7 +49,7 @@ class TestTextFiltersJa(unittest.IsolatedAsyncioTestCase):
             'ださい。彼らは何をしているのか、わからずにいるので',
             'す」。人々はイエスの着物をくじ引きで分け合った。',
             '民衆は立って見ていた。'
-            ))])
+            )), '。' * 28])
 
         # Check if there is a space.
         slide = make_slide([

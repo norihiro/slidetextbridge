@@ -3,10 +3,8 @@ from unittest.mock import MagicMock, AsyncMock
 
 from slidetextbridge.plugins import text_filters
 
-def make_slide(texts):
-    return text_filters.TextFilteredSlide(
-            {'shapes': [{'text': t} for t in texts]}
-    )
+from test.filter_helper import *
+
 
 class TestTextFilters(unittest.IsolatedAsyncioTestCase):
 
@@ -29,107 +27,106 @@ class TestTextFilters(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(cfg.patterns[1][1], 'r2')
 
     async def test_linebreak_filter_strip(self):
-        ctx = MagicMock()
 
-        cfg = text_filters.TextLinebreakFilter.config({
-            'strip': True,
-        })
-        filter_obj = text_filters.TextLinebreakFilter(ctx=ctx, cfg=cfg)
-        filter_obj.emit = AsyncMock()
-        slide = make_slide(['A', 'B ', ' C ', ' D'])
+        res = await run_filter(
+                text_filters.TextLinebreakFilter,
+                {'strip': True,},
+                make_slide(['A', 'B ', ' C ', ' D'])
+        )
+        self.assertEqual(res.to_texts(), ['A', 'B', 'C', 'D'])
 
-        await filter_obj.update(slide, args=None)
-
-        filter_obj.emit.assert_awaited_once()
-        res = filter_obj.emit.await_args[0][0].to_texts()
-        self.assertEqual(res, ['A', 'B', 'C', 'D'])
-
-        cfg = text_filters.TextLinebreakFilter.config({
-            'strip': False,
-        })
-        filter_obj = text_filters.TextLinebreakFilter(ctx=ctx, cfg=cfg)
-        filter_obj.emit = AsyncMock()
-        slide = make_slide(['A', 'B ', ' C ', ' D'])
-
-        await filter_obj.update(slide, args=None)
-
-        filter_obj.emit.assert_awaited_once()
-        res = filter_obj.emit.await_args[0][0].to_texts()
-        self.assertEqual(res, ['A', 'B ', ' C ', ' D'])
+        res = await run_filter(
+                text_filters.TextLinebreakFilter,
+                {'strip': False,},
+                make_slide(['A', 'B ', ' C ', ' D'])
+        )
+        self.assertEqual(res.to_texts(), ['A', 'B ', ' C ', ' D'])
 
     async def test_linebreak_filter_split_join(self):
-        ctx = MagicMock()
 
-        cfg = text_filters.TextLinebreakFilter.config({
-            'split_long_line': 8,
-            'joined_column_max': 4,
-            'join_by': '-'
-        })
-        filter_obj = text_filters.TextLinebreakFilter(ctx=ctx, cfg=cfg)
-        filter_obj.emit = AsyncMock()
-        slide = make_slide([
-            'abcdefghijk', # Check too long ASCII word
-            'a\nb',
-        ])
-
-        await filter_obj.update(slide, args=None)
-
-        filter_obj.emit.assert_awaited_once()
-        res = filter_obj.emit.await_args[0][0].to_texts()
-        self.assertEqual(res, [
+        # Let's make a method that takes cfg, input_texts, and output_texts as the parameters.
+        res = await run_filter(
+                text_filters.TextLinebreakFilter,
+                {
+                    'split_long_line': 8,
+                    'joined_column_max': 4,
+                    'join_by': '-'
+                },
+                make_slide([
+                    'abcdefghijk', # Check too long ASCII word
+                    'a\nb',
+                    '.'*12,
+                ])
+        )
+        self.assertEqual(res.to_texts(), [
             'abcdefgh\nijk',
             'a-b',
+            '.'*12,
+        ])
+
+        res = await run_filter(
+                text_filters.TextLinebreakFilter,
+                {
+                    'split_long_line': 4,
+                    'split_nowrap_allow_overflow': False,
+                },
+                make_slide([
+                    'abc',
+                    'abcd',
+                    'abcde',
+                    'abcdef',
+                    '...',
+                    '....',
+                    '.....',
+                    '......',
+                ])
+        )
+        self.assertEqual(res.to_texts(), [
+            'abc',
+            'abcd',
+            'abcd\ne',
+            'abcd\nef',
+            '...',
+            '....',
+            '.....',
+            '......',
         ])
 
     async def test_linebreak_filter_delimiters(self):
-        ctx = MagicMock()
 
-        cfg = text_filters.TextLinebreakFilter.config({
-            'shape_delimiter': '/',
-            'line_delimiter': ':',
-        })
-        filter_obj = text_filters.TextLinebreakFilter(ctx=ctx, cfg=cfg)
-        filter_obj.emit = AsyncMock()
-        slide = make_slide([
-            'a\nb',
-            'c',
-        ])
-
-        await filter_obj.update(slide, args=None)
-
-        filter_obj.emit.assert_awaited_once()
-        res = filter_obj.emit.await_args[0][0]
+        res = await run_filter(
+                text_filters.TextLinebreakFilter,
+                {
+                    'shape_delimiter': '/',
+                    'line_delimiter': ':',
+                },
+                make_slide([
+                    'a\nb',
+                    'c',
+                ])
+        )
         self.assertEqual(res.to_texts(), [
             'a:b',
             'c',
         ])
         self.assertEqual(str(res), 'a:b/c')
 
-
     async def test_regex_filter(self):
-        ctx = MagicMock()
 
-        cfg = text_filters.RegexFilter.config({
-            'patterns': [
-                {'p': r'(Th|th)is', 'r': r'\1at'},
-            ]
-        })
-        filter_obj = text_filters.RegexFilter(ctx=ctx, cfg=cfg)
-
-        filter_obj.emit = AsyncMock()
-        slide = make_slide(['This is a pen.'])
-        await filter_obj.update(slide, args=None)
-        filter_obj.emit.assert_awaited_once()
-        res = filter_obj.emit.await_args[0][0].to_texts()
-        self.assertEqual(res, ['That is a pen.'])
-
-        filter_obj.emit = AsyncMock()
-        slide = MagicMock()
-        slide.to_texts.return_value = ['Who is this?', ]
-        await filter_obj.update(slide, args=None)
-        filter_obj.emit.assert_awaited_once()
-        res = filter_obj.emit.await_args[0][0].to_texts()
-        self.assertEqual(res, ['Who is that?'])
+        res = await run_filter(
+                text_filters.RegexFilter,
+                {
+                    'patterns': [
+                        {'p': r'(Th|th)is', 'r': r'\1at'},
+                    ],
+                },
+                slides=[
+                    make_slide(['This is a pen.']),
+                    make_slide(['Who is this?']),
+                ],
+        )
+        self.assertEqual(res[0].to_texts(), ['That is a pen.'])
+        self.assertEqual(res[1].to_texts(), ['Who is that?'])
 
     # TODO: Also check the combination with jmespath filter
 
