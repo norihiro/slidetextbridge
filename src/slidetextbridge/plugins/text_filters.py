@@ -3,6 +3,7 @@ Filters to modify texts
 '''
 
 import re
+import logging
 from slidetextbridge.core import config
 from . import base
 
@@ -60,6 +61,7 @@ class TextLinebreakFilter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
+        self.logger = logging.getLogger(f'linebreak({self.cfg.location})')
         self.connect_to(cfg.src)
 
     def _filter_shape_text(self, text):
@@ -206,6 +208,7 @@ class RegexFilter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
+        self.logger = logging.getLogger(f'regex({self.cfg.location})')
         self.connect_to(cfg.src)
 
     def _filter_shape_text(self, text):
@@ -243,10 +246,8 @@ class TextFilteredSlide(base.SlideBase):
             if self._dict:
                 return [shape['text'] for shape in self._dict['shapes']]
         except (TypeError, KeyError) as e:
-            if self.parent:
-                print(f'Error: {self.parent.type_name()}({self.parent.cfg.location}): {e}')
-            else:
-                print(f'Error: {e}')
+            logger = self.parent.logger if self.parent else logging.getLogger('TextFilteredSlide')
+            logger.error('Failed to convert slide to texts. %s', e)
         return []
 
     def __str__(self):
