@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 'doc/*'
     paths:
       - 'doc/**'
       - '.github/workflows/doc.yaml'
@@ -30,13 +31,34 @@ jobs:
           python -m pip install --upgrade pip
           pip install sphinx
 
+      - name: Find the destination
+        id: name
+        run: |
+          ref_name='${{ github.ref_name }}'
+          ref_name_base="$(basename "$ref_name")"
+
+          case "$ref_name_base" in
+            *.* | *.*.*) base="$ref_name_base" ;;
+            *)     base="devel" ;;
+          esac
+
+          echo "doc_root=doc/${base}" >> $GITHUB_OUTPUT
+          echo "doc_root_path=$PWD/gh-pages/doc/${base}" >> $GITHUB_OUTPUT
+
       - name: Build HTML files
         run: |
-          rm -rf gh-pages/doc
-          sphinx-build -b html doc/ gh-pages/doc/
+          doc_root='${{ steps.name.outputs.doc_root }}'
+          doc_root_path='${{ steps.name.outputs.doc_root_path }}'
+
+          set -e
+          rm -rf "$doc_root_path"
+          sphinx-build -b html doc/ "$doc_root_path/"
 
       - name: upload
         run: |
+          doc_root='${{ steps.name.outputs.doc_root }}'
+          doc_root_path='${{ steps.name.outputs.doc_root_path }}'
+
           set -e
           h=$(git log -1 --format='%h')
 
@@ -49,7 +71,7 @@ jobs:
           git config --global user.email '780600+norihiro@users.noreply.github.com'
           git config --global user.name 'github-actions[bot]'
 
-          git add doc/
-          git commit -m "doc: Generated from $h"
+          git add "$doc_root"
+          git commit -m "$doc_root: Generated from $h"
 
           git push
