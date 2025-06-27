@@ -4,6 +4,7 @@ Get text from OpenLP
 
 import json
 import asyncio
+import logging
 import aiohttp
 import aiohttp.client_exceptions
 import websockets
@@ -48,6 +49,7 @@ class OpenLPCapture(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
+        self.logger = logging.getLogger(f'openlp({self.cfg.location})')
 
         self._conn = None
         self._conn_ws = None
@@ -89,18 +91,16 @@ class OpenLPCapture(base.PluginBase):
         except Exception as e: # pylint: disable=W0718
             await self._conn_ws.close()
             self._conn_ws = None
-            print(f'Error: websocket polling failed: {e}')
+            self.logger.warning('Failed to poll. %s', e)
         return json.loads(res)
 
     async def _cache_current_item(self):
         live_items = json.loads(await self._olp_get('/api/v2/controller/live-items'))
-        print(live_items)
         self._cache[live_items['id']] = live_items
 
     async def _wait_and_get_text(self):
         while True:
             poll = await self._olp_poll()
-            print(poll)
             if not poll:
                 return None
             if _is_blank(poll):
@@ -136,7 +136,7 @@ class OpenLPCapture(base.PluginBase):
             except Exception as e:
                 error = str(e)
                 if error != last_error:
-                    print(f'openlp: {e}')
+                    self.logger.warning('%s', error)
                     last_error = error
                 await asyncio.sleep(3)
 
@@ -156,10 +156,8 @@ class OpenLPSlide(base.SlideBase):
             if self._dict:
                 return [shape['text'] for shape in self._dict['shapes']]
         except (TypeError, KeyError) as e:
-            if self.parent:
-                print(f'Error: {self.parent.type_name()}({self.parent.cfg.location}): {e}')
-            else:
-                print(f'Error: {e}')
+            logger = self.parent.logger if self.parent else logging.getLogger('OpenLPSlide')
+            logger.error('Failed to convert slide to texts. %s', e)
         return []
 
     def to_dict(self):
