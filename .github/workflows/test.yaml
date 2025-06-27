@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  lint:
+  unittest:
     runs-on: ubuntu-latest
 
     strategy:
