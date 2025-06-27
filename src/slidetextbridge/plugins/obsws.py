@@ -2,10 +2,10 @@
 Send text to OBS Studio
 '''
 
+import logging
 import simpleobsws
 from slidetextbridge.core import config
 from . import base
-
 
 class ObsWsEmitter(base.PluginBase):
     '''
@@ -28,6 +28,7 @@ class ObsWsEmitter(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
+        self.logger = logging.getLogger(f'obsws({self.cfg.location})')
         self.ws = None
         self.connect_to(cfg.src)
 
@@ -49,13 +50,19 @@ class ObsWsEmitter(base.PluginBase):
         try:
             if not self.ws:
                 await self._ws_connect()
+        except Exception as e:
+            self.logger.warning('Could not connect to %s. %s', self.cfg.url, e)
+            self.ws = None
+            return
 
+        try:
             await self._send_request('SetInputSettings', {
                 'inputName': self.cfg.source_name,
                 'inputSettings': {'text': text}
             })
         except Exception as e:
-            print(f'Error: obsws({self.cfg.location}): {e}')
+            self.logger.warning('Could not send text. %s', e)
+            return
 
     async def _send_request(self, req, data, retry=2):
         while retry > 0:
@@ -64,9 +71,15 @@ class ObsWsEmitter(base.PluginBase):
                 res = await self.ws.call(simpleobsws.Request(req, data))
                 if res.ok():
                     return res.responseData
+                self.logger.warning('%s: %d: %s', res.requestType,
+                                    res.requestStatus.code, res.requestStatus.comment)
+
             except Exception as e:
+                self.logger.warning('Failed to send text. %s', e)
+
                 try:
                     await self.ws.disconnect()
+                    self.ws = None
                 except: # pylint: disable=W0702
                     pass
                 if retry == 0:
@@ -75,3 +88,4 @@ class ObsWsEmitter(base.PluginBase):
                     await self._ws_connect()
                 except:
                     self.ws = None
+                self.logger.info('Retrying...')
