@@ -40,34 +40,37 @@ class ImpressCapture(base.PluginBase):
 
     async def _loop(self):
         while True:
-            if not self._desktop:
-                try:
-                    self._connect()
-                    self._connect_error_reported = False
-                except Exception as e:
-                    self._desktop = None
-                    if not self._connect_error_reported:
-                        self._connect_error_reported = True
-                        print(f'Error: impress({self.cfg.location}): failed to connect: {e}')
-                    await asyncio.sleep(1)
-                    continue
-
-            try:
-                slide = self._get_slide()
-                self._get_slide_error_reported = False
-            except Exception as e:
-                if not self._get_slide_error_reported:
-                    self._get_slide_error_reported = True
-                    print(f'Error: impress({self.cfg.location}): failed to get slide: {e}')
-                self._desktop = None
+            if not await self._loop_once():
                 await asyncio.sleep(1)
-                continue
 
-            if slide != self._last_slide:
-                self._last_slide = slide
-                await self.emit(ImpressSlide(slide))
+    async def _loop_once(self):
+        if not self._desktop:
+            try:
+                self._connect()
+                self._connect_error_reported = False
+            except Exception as e:
+                self._desktop = None
+                if not self._connect_error_reported:
+                    self._connect_error_reported = True
+                    print(f'Error: impress({self.cfg.location}): failed to connect: {e}')
+                return False
 
-            await asyncio.sleep(self.cfg.poll_wait_time)
+        try:
+            slide = self._get_slide()
+            self._get_slide_error_reported = False
+        except Exception as e:
+            if not self._get_slide_error_reported:
+                self._get_slide_error_reported = True
+                print(f'Error: impress({self.cfg.location}): failed to get slide: {e}')
+            self._desktop = None
+            return False
+
+        if slide != self._last_slide:
+            self._last_slide = slide
+            await self.emit(ImpressSlide(slide))
+
+        await asyncio.sleep(self.cfg.poll_wait_time)
+        return True
 
     def _connect(self):
         context = uno.getComponentContext()
