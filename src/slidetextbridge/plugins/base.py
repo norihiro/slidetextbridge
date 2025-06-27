@@ -2,6 +2,7 @@
 Base class definition
 '''
 
+import logging
 import re
 
 def set_config_arguments(cfg, has_src=True):
@@ -30,6 +31,8 @@ class PluginBase:
         self.cfg = cfg
         self.name = cfg.name
         self.sinks = []
+        if not hasattr(self, 'logger'):
+            self.logger = logging.getLogger(f'{__name__}({self.cfg.location})')
 
     def connect_to(self, name=None, args=None):
         '''
@@ -59,7 +62,10 @@ class PluginBase:
         :param slide:  The new slide.
         '''
         for sink, args in self.sinks:
-            await sink.update(slide, args)
+            try:
+                await sink.update(slide, args)
+            except Exception as e:
+                self.logger.error('Failed to send text to %s. %s', type(sink), e)
 
     async def update(self, slide, args):
         '''
