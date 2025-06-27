@@ -111,7 +111,7 @@ class TextLinebreakFilter(base.PluginBase):
             ix_other = -1
             n = 0
             allow_overflow = False
-            while (allow_overflow or n <= self.cfg.split_long_line) and ix < len(text):
+            while ix < len(text):
                 c = text[ix]
                 n += self._count_text(c)
                 allow_overflow = False
@@ -124,6 +124,9 @@ class TextLinebreakFilter(base.PluginBase):
                     ix_cjk = ix
                 else:
                     ix_other = ix
+
+                if not allow_overflow and n > self.cfg.split_long_line:
+                    break
                 ix += 1
 
             if ix == len(text):
@@ -146,6 +149,9 @@ class TextLinebreakFilter(base.PluginBase):
                 text = text[ix_other:]
 
             # The last condition to avoid infinite loop
+            # Will reach when satisfying both of these conditions.
+            # - There are only nowrap characters but exceeding the threshold.
+            # - allow_overflow = false.
             else:
                 yield text
                 break
