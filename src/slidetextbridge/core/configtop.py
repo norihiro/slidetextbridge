@@ -2,6 +2,7 @@
 Configuration file reader
 '''
 
+import logging
 import yaml
 from .config import ConfigBase
 
@@ -19,7 +20,16 @@ class ConfigTop(ConfigBase):
         from slidetextbridge.plugins import accumulate # pylint: disable=C0415
         ret = []
         for d in data:
-            cls = accumulate.plugins[d['type']]
+            try:
+                t = d['type']
+            except KeyError as e:
+                logging.getLogger(__name__).error('%s: A field "type" is missing.', d['_location'])
+                raise ValueError(f'Error while parsing {d["_location"]}') from e
+            try:
+                cls = accumulate.plugins[t]
+            except KeyError as e:
+                logging.getLogger(__name__).error('%s: No such type %s', d['_location'], e)
+                raise ValueError(f'Error while parsing {d["_location"]}') from e
             cfg = cls.config(d)
             ret.append(cfg)
         return ret
