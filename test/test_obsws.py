@@ -21,12 +21,16 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
     async def test_connect_and_update(self, MockWebSocketClient):
         ctx = MagicMock()
 
-        cfg = MagicMock()
-        cfg.src = 'dummy'
-        cfg.url = 'ws://localhost:4455/'
-        cfg.port = 4455
-        cfg.password = 'secret'
-        cfg.source_name = 'TestSource'
+        cfg_src = 'dummy'
+        cfg_url = 'ws://localhost:4455/'
+        cfg_password = 'secret'
+        cfg_src_name = 'test-source-name'
+        cfg = obsws.ObsWsEmitter.config({
+                'src': cfg_src,
+                'url': cfg_url,
+                'password': cfg_password,
+                'source_name': cfg_src_name
+        })
 
         mock_ws = AsyncMock()
         mock_res = MagicMock()
@@ -38,15 +42,16 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_res.responseData = {'status': 'ok'}
 
         obj = obsws.ObsWsEmitter(ctx=ctx, cfg=cfg)
+        ctx.get_instance.assert_called_once_with(name=cfg_src)
 
         await obj.update('test text', args=None)
 
-        MockWebSocketClient.assert_called_with(url=cfg.url, password=cfg.password)
+        MockWebSocketClient.assert_called_with(url=cfg_url, password=cfg_password)
         mock_ws.connect.assert_awaited()
         mock_ws.call.assert_awaited_with(obsws.simpleobsws.Request(
             'SetInputSettings',
             {
-                'inputName': cfg.source_name,
+                'inputName': cfg_src_name,
                 'inputSettings': {'text': 'test text'},
             }
         ))
