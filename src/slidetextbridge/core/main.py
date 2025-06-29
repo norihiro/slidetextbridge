@@ -5,6 +5,7 @@ Main routine
 import argparse
 import asyncio
 import logging
+import sys
 
 from slidetextbridge.core.context import Context
 from slidetextbridge.core import configtop
@@ -31,15 +32,21 @@ async def _loop(ctx):
 
 def main():
     'The entry point'
-    logging.basicConfig(level=logging.INFO)
-    args = _get_args()
-    cfgs = configtop.load(args.config)
-    ctx = _setup_ctx(cfgs)
+    try:
+        logging.basicConfig(level=logging.INFO)
+        args = _get_args()
+        cfgs = configtop.load(args.config)
+        ctx = _setup_ctx(cfgs)
+    except Exception as e:
+        logging.getLogger(__name__).error('Failed to start. %s', e)
+        return 1
 
     try:
         asyncio.run(_loop(ctx))
     except KeyboardInterrupt:
         logging.getLogger(__name__).info('Interrupted')
 
+    return 0
+
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
