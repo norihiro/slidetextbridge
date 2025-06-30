@@ -45,12 +45,15 @@ class PowerPointCapture(base.PluginBase):
 
     async def _loop(self):
         while True:
-            slide = self._get_slide()
-            if slide != self._last_slide:
-                self._last_slide = slide
-                await self.emit(PowerPointSlide(slide, cfg=self.cfg))
+            try:
+                slide = self._get_slide()
+                if slide != self._last_slide:
+                    self._last_slide = slide
+                    await self.emit(PowerPointSlide(slide, cfg=self.cfg))
 
-            await asyncio.sleep(self.cfg.poll_wait_time)
+                await asyncio.sleep(self.cfg.poll_wait_time)
+            except Exception as e:
+                await asyncio.sleep(1)
 
     def _connect_ppt(self):
         self.ppt = win32com.client.Dispatch("PowerPoint.Application")
