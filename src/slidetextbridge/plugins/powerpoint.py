@@ -3,9 +3,11 @@ Get text from Microsoft PowerPoint
 '''
 
 import asyncio
+import logging
 import win32com.client
 import pywintypes
 from slidetextbridge.core import config
+from slidetextbridge.core.logging import HideSameLogFilter
 from . import base
 
 
@@ -36,6 +38,8 @@ class PowerPointCapture(base.PluginBase):
 
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
+        self.logger = logging.getLogger(f'ppt({self.cfg.location})')
+        self.logger.addFilter(HideSameLogFilter())
         self._last_slide = self
         self.ppt = None
         self._last_window = None
@@ -53,15 +57,23 @@ class PowerPointCapture(base.PluginBase):
 
                 await asyncio.sleep(self.cfg.poll_wait_time)
             except Exception as e:
+                self.logger.error('Unknown error: %s', e)
                 await asyncio.sleep(1)
 
     def _connect_ppt(self):
+        self.logger.info('Connecting to PowerPoint...')
         self.ppt = win32com.client.Dispatch("PowerPoint.Application")
         self._last_window = None
+        if self.ppt:
+            self.logger.info('Connected to PowerPoint.')
+        else:
+            self.logger.warning('Failed to connect to PowerPoint.')
 
     def _current_slideshow_window(self):
         if not self.ppt:
             self._connect_ppt()
+            if not self.ppt:
+                return None
         try:
             slide_count = self.ppt.SlideShowWindows.Count
         except (pywintypes.com_error, AttributeError): # pylint: disable=no-member
@@ -69,11 +81,15 @@ class PowerPointCapture(base.PluginBase):
             self._last_window = None
             return None
 
+        if slide_count == 0:
+            self.logger.warning('No current presentation window.')
+            return None
+
         if slide_count == 1:
             self._last_window = self.ppt.SlideShowWindows(1)
             return self._last_window
 
-        cand = False
+        cand = None
         for ix in range(slide_count):
             w = self.ppt.SlideShowWindows(ix + 1)
             if w.Active:
