@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install sphinx
+          pip install sphinx sphinx-intl
 
       - name: Find the destination
         id: name
@@ -44,6 +44,29 @@ jobs:
 
           echo "doc_root=doc/${base}" >> $GITHUB_OUTPUT
           echo "doc_root_path=$PWD/gh-pages/doc/${base}" >> $GITHUB_OUTPUT
+
+      - name: gettext
+        run: |
+          doc_root='${{ steps.name.outputs.doc_root }}'
+          doc_root_path='${{ steps.name.outputs.doc_root_path }}'
+          langs='ja'
+
+          cd doc
+
+          sphinx-build -b gettext . _gettext
+          for lang in ${langs}; do
+            sphinx-intl update -p _gettext -l $lang
+          done
+
+      - name: upload and download Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          download_translations: true
+          config: doc/crowdin.yaml
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Build HTML files
         run: |
