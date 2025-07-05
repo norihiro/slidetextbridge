@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Output Step: webserver &#8212; Slide Text Bridge  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=4eb6406d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="Troubleshooting" href="../troubleshooting.html" />
+    <link rel="prev" title="Output Step: obsws" href="obsws.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="output-step-webserver">
+<h1>Output Step: <cite>webserver</cite><a class="headerlink" href="#output-step-webserver" title="Link to this heading">¶</a></h1>
+<p>ブラウザー上にテキストを表示できるよう、ウェブサーバーをホストします。テキストはリアルタイムで更新されます。</p>
+<ul class="simple">
+<li><p><strong>type: webserver</strong></p></li>
+</ul>
+<p><strong>パラメータ:</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">host (string, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>リスンするホスト。デフォルトは <code class="docutils literal notranslate"><span class="pre">localhost</span></code> です。 <code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code> を設定すると、別のホストからも表示できます。</p>
+</dd>
+<dt class="field-even">port (integer, optional)<span class="colon">:</span></dt>
+<dd class="field-even"><p>リスンするポート番号。デフォルトは <code class="docutils literal notranslate"><span class="pre">8080</span></code> です。</p>
+</dd>
+<dt class="field-odd">index_html (string, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Overwrite the HTML contents.</p>
+</dd>
+<dt class="field-even">script_js (string, optional)<span class="colon">:</span></dt>
+<dd class="field-even"><p>JavaScript の内容を上書きします。</p>
+</dd>
+<dt class="field-odd">style_css (string, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>スタイルシートの内容を上書きします。</p>
+</dd>
+</dl>
+<p><strong>YAML設定例:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ppt</span>
+
+<span class="w">  </span><span class="c1"># This step sends the text to the &#39;Live Text&#39; source in OBS.</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">webserver</span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">style_css</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">body {</span>
+<span class="w">        </span><span class="no">font-family: sans-serif;</span>
+<span class="w">        </span><span class="no">font-size: 32pt;</span>
+<span class="w">      </span><span class="no">}</span>
+</pre></div>
+</div>
+<p>次に、ブラウザを開き、<code class="docutils literal notranslate"><span class="pre">http://127.0.0.1/</span></code> (またはコンピュータのIPアドレス) に移動します。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<ul class="simple">
+<li><p>vMix からページを開いた場合、背景は透明になっています。詳細は <a class="reference external" href="https://www.vmix.com/help28/WebBrowser.html">vMix User Guide</a> を参照してください。</p></li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Slide Text Bridge</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>ナビゲーション</h3>
+<p class="caption" role="heading"><span class="caption-text">ユーザーガイド</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">設定ファイルリファレンス</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ステップの種類</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ppt.html">Input Step: <cite>ppt</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="impress.html">Input Step: <cite>impress</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="openlp.html">Input Step: <cite>openlp</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jmespath.html">Filter Step: <cite>jmespath</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="linebreak.html">Filter Step: <cite>linebreak</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="regex.html">Filter Step: <cite>regex</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdout.html">Filter Step: <cite>stdout</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="obsws.html">Output Step: <cite>obsws</cite></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Output Step: <cite>webserver</cite></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://github.com/norihiro/slidetextbridge/wiki/Gallery">Gallery</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/norihiro/slidetextbridge/">Source Code</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">ステップの種類</a><ul>
+      <li>Previous: <a href="obsws.html" title="前の章へ">Output Step: <cite>obsws</cite></a></li>
+      <li>Next: <a href="../troubleshooting.html" title="次の章へ">Troubleshooting</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      
+      
+      
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

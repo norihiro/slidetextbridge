@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>入門 &#8212; Slide Text Bridge  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=4eb6406d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/translations.js?v=4755f45a"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="設定ファイルリファレンス" href="configuration.html" />
+    <link rel="prev" title="Slide Text Bridge" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="getting-started">
+<h1>入門<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
+<p>このセクションでは、<code class="docutils literal notranslate"><span class="pre">slidetextbridge</span></code> を実行するための基本的な手順について説明します。</p>
+<section id="for-windows-users-recommended">
+<h2>Windowsユーザー向け (推奨)<a class="headerlink" href="#for-windows-users-recommended" title="Link to this heading">¶</a></h2>
+<p>Windowsを使用している場合、最も簡単な方法は、最新のZIPファイルをダウンロードすることです。</p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/norihiro/slidetextbridge/releases">release page</a> から <code class="docutils literal notranslate"><span class="pre">slidetextbridge-X.Y.Z-windows.zip</span></code> ファイルをダウンロードします。</p></li>
+<li><p>ZIPファイルを展開します。</p></li>
+<li><p>フォルダ内の設定ファイル <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> を編集します。</p></li>
+<li><p>以上です! このフォルダから <code class="docutils literal notranslate"><span class="pre">slidetextbridge.exe</span></code> を実行してください。</p></li>
+</ol>
+</section>
+<section id="from-pypi-other-platforms">
+<h2>PyPI から (他のプラットフォーム)<a class="headerlink" href="#from-pypi-other-platforms" title="Link to this heading">¶</a></h2>
+<p>PyPI からインストールすることもできます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># It is recommended to use a virtual environment</span>
+<span class="c1"># For Linux, add `--system-site-packages` to use uno module from LibreOffice.</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>--system-site-packages<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># On Windows, use `venv\Scripts\activate`</span>
+
+<span class="c1"># Install this tool</span>
+pip<span class="w"> </span>install<span class="w"> </span>slidetextbridge
+</pre></div>
+</div>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">slidetextbridge</span></code> uses a YAML file (e.g., <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) to define a pipeline of steps.
+Each step in the pipeline processes text in some way,
+either by reading it from a source, transforming it, or sending it to a destination.</p>
+<p>ここでは基本的な設定を開始します。このセットアップは、PowerPointの現在のスライドのプレースホルダからテキストを読み取り、OBS Studioのテキストソースに送信します。</p>
+<p><strong>config.yaml:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configuration file for slidetextbridge</span>
+
+<span class="c1"># The &#39;steps&#39; key defines a sequence of operations.</span>
+<span class="c1"># The text output from one step becomes the input for the next.</span>
+<span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Step 1: Retrieves text from the notes of the active slide in Microsoft PowerPoint.</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ppt</span>
+
+<span class="w">  </span><span class="c1"># Step 2: Prints the retrieved text to the console. This is useful for troubleshooting.</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stdout</span>
+
+<span class="w">  </span><span class="c1"># Step 3: Sends the text to a specific source in OBS Studio via the WebSocket plugin.</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">obsws</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ws://localhost:4455/&#39;</span><span class="w">     </span><span class="c1"># URL of the OBS WebSocket server.</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;your_password_here&#39;</span><span class="w">  </span><span class="c1"># Password for the OBS WebSocket server (leave blank if none).</span>
+<span class="w">    </span><span class="nt">source_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Live</span><span class="nv"> </span><span class="s">Text&#39;</span><span class="w">        </span><span class="c1"># The name of the Text (GDI+) or (Freetype 2) source in OBS Studio.</span>
+
+<span class="w">  </span><span class="c1"># # Step 3: Optionaly, you may use web server for vMix, etc.</span>
+<span class="w">  </span><span class="c1"># - type: webserver</span>
+<span class="w">  </span><span class="c1">#   host: 0.0.0.0                   # Host address the server will listen on. 0.0.0.0 for all.</span>
+<span class="w">  </span><span class="c1">#   port: 8080                      # Host port the server will listen on.</span>
+</pre></div>
+</div>
+</section>
+<section id="running-the-program">
+<h2>プログラムの実行<a class="headerlink" href="#running-the-program" title="Link to this heading">¶</a></h2>
+<p><strong>リリースページからダウンロードしました:</strong></p>
+<blockquote>
+<div><p>ZIPファイルをリリースページからダウンロードした場合、</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> が <code class="docutils literal notranslate"><span class="pre">slidetextbridge.exe</span></code> の同じディレクトリにあることを確認します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slidetextbridge.exe</span></code> をダブルクリックします。</p></li>
+<li><p>これで、コンソールウィンドウが表示されます。</p></li>
+</ol>
+</div></blockquote>
+<p><strong>PyPIからダウンロードしました:</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">pip</span></code> を使ってインストールした場合、</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>slidetextbridge<span class="w"> </span>-c<span class="w"> </span>config.yaml
+</pre></div>
+</div>
+</div></blockquote>
+<p>さて、PowerPointでスライドを変更すると、 新しいスライドのテキストは、設定に従って、指定されたテキストソースまたはブラウザに表示されます。</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Slide Text Bridge</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>ナビゲーション</h3>
+<p class="caption" role="heading"><span class="caption-text">ユーザーガイド</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">入門</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#for-windows-users-recommended">Windowsユーザー向け (推奨)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#from-pypi-other-platforms">PyPI から (他のプラットフォーム)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-program">プログラムの実行</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">設定ファイルリファレンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/index.html">ステップの種類</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://github.com/norihiro/slidetextbridge/wiki/Gallery">Gallery</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/norihiro/slidetextbridge/">Source Code</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="前の章へ">Slide Text Bridge</a></li>
+      <li>Next: <a href="configuration.html" title="次の章へ">設定ファイルリファレンス</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      
+      
+      
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

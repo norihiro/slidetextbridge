@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Input Step: ppt &#8212; Slide Text Bridge  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=4eb6406d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="Input Step: impress" href="impress.html" />
+    <link rel="prev" title="ステップの種類" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="input-step-ppt">
+<h1>Input Step: <cite>ppt</cite><a class="headerlink" href="#input-step-ppt" title="Link to this heading">¶</a></h1>
+<p>Microsoft PowerPoint のプレゼンテーションからテキストを読み取ります。 入力ソースとして設計されており、通常はパイプラインの最初のステップです。</p>
+<ul class="simple">
+<li><p><strong>type: ppt</strong></p></li>
+</ul>
+<p><strong>パラメータ:</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">placeholder_only (boolean, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>プレースホルダの図形のみを選択します。デフォルトでは <code class="docutils literal notranslate"><span class="pre">true</span></code> です。</p>
+</dd>
+<dt class="field-even">poll_wait_time (float, optional)<span class="colon">:</span></dt>
+<dd class="field-even"><p>ポーリングごとの待ち時間を秒単位で設定します。デフォルトでは0.1秒です。</p>
+</dd>
+</dl>
+<dl>
+<dt>プレースホルダとは</dt><dd><p>プレースホルダとは、スライドマスターまたは新しいスライドページが作成されたときに存在する図形を意味します。 プレースホルダにすべてのテキストを挿入することをお勧めします。</p>
+<p>しかし、他のすべてのテキストを取得したい場合は、 <code class="docutils literal notranslate"><span class="pre">placeholder_only</span></code> を <code class="docutils literal notranslate"><span class="pre">false</span></code> に設定します。 これにより、すべての図形が処理されます。</p>
+</dd>
+</dl>
+<p><strong>YAML設定例:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># This step reads from PowerPoint. The text is then passed to the next step.</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ppt</span>
+<span class="w">    </span><span class="nt">placeholder_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">poll_wait_time</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Slide Text Bridge</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>ナビゲーション</h3>
+<p class="caption" role="heading"><span class="caption-text">ユーザーガイド</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">設定ファイルリファレンス</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ステップの種類</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Input Step: <cite>ppt</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="impress.html">Input Step: <cite>impress</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="openlp.html">Input Step: <cite>openlp</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jmespath.html">Filter Step: <cite>jmespath</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="linebreak.html">Filter Step: <cite>linebreak</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="regex.html">Filter Step: <cite>regex</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdout.html">Filter Step: <cite>stdout</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="obsws.html">Output Step: <cite>obsws</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="webserver.html">Output Step: <cite>webserver</cite></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://github.com/norihiro/slidetextbridge/wiki/Gallery">Gallery</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/norihiro/slidetextbridge/">Source Code</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">ステップの種類</a><ul>
+      <li>Previous: <a href="index.html" title="前の章へ">ステップの種類</a></li>
+      <li>Next: <a href="impress.html" title="次の章へ">Input Step: <cite>impress</cite></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      
+      
+      
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
