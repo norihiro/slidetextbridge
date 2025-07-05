@@ -10,6 +10,9 @@ on:
       - '.github/workflows/doc.yaml'
   workflow_dispatch:
 
+env:
+  languages: 'ja'
+
 permissions:
   contents: write
 
@@ -38,23 +41,20 @@ jobs:
           ref_name_base="$(basename "$ref_name")"
 
           case "$ref_name_base" in
-            *.* | *.*.*) base="$ref_name_base" ;;
-            *)     base="devel" ;;
+            *.* | *.*.*) version_dir="$ref_name_base" ;;
+            *)           version_dir="devel" ;;
           esac
 
-          echo "doc_root=doc/${base}" >> $GITHUB_OUTPUT
-          echo "doc_root_path=$PWD/gh-pages/doc/${base}" >> $GITHUB_OUTPUT
+          echo "version_dir=${version_dir}" >> $GITHUB_OUTPUT
 
       - name: gettext
         run: |
-          doc_root='${{ steps.name.outputs.doc_root }}'
-          doc_root_path='${{ steps.name.outputs.doc_root_path }}'
-          langs='ja'
+          languages='${{ env.languages }}'
 
           cd doc
 
           sphinx-build -b gettext . _gettext
-          for lang in ${langs}; do
+          for lang in ${languages}; do
             sphinx-intl update -p _gettext -l $lang
           done
 
@@ -63,6 +63,7 @@ jobs:
         with:
           upload_sources: true
           download_translations: true
+          push_translations: false
           config: doc/crowdin.yaml
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
@@ -70,17 +71,23 @@ jobs:
 
       - name: Build HTML files
         run: |
-          doc_root='${{ steps.name.outputs.doc_root }}'
-          doc_root_path='${{ steps.name.outputs.doc_root_path }}'
+          languages='${{ env.languages }}'
+          version_dir='${{ steps.name.outputs.version_dir }}'
 
           set -e
-          rm -rf "$doc_root_path"
-          sphinx-build -b html doc/ "$doc_root_path/"
+
+          cd doc
+          rm -rf "../gh-pages/doc/$version_dir"
+          sphinx-build -b html . "../gh-pages/doc/$version_dir"
+
+          for lang in ${languages}; do
+            rm -rf "../gh-pages/doc/$lang/$version_dir"
+            sphinx-build -b html -D language=$lang . "../gh-pages/doc/$lang/$version_dir"
+          done
 
       - name: upload
         run: |
-          doc_root='${{ steps.name.outputs.doc_root }}'
-          doc_root_path='${{ steps.name.outputs.doc_root_path }}'
+          version_dir='${{ steps.name.outputs.version_dir }}'
 
           set -e
           h=$(git log -1 --format='%h')
@@ -94,7 +101,7 @@ jobs:
           git config --global user.email '780600+norihiro@users.noreply.github.com'
           git config --global user.name 'github-actions[bot]'
 
-          git add "$doc_root"
-          git commit -m "$doc_root: Generated from $h"
+          git add "doc/$version_dir" doc/*/"$version_dir"
+          git commit -m "doc/*/$version_dir: Generated from $h"
 
           git push
