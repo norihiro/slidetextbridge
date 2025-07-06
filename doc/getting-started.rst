@@ -20,7 +20,6 @@ From PyPI (Other Platforms)
 ---------------------------
 
 You may install from PyPI.
-(Though I have not released on PyPI yet, hopefully, it's available when you are reading this document.)
 
 .. code-block:: bash
 
@@ -32,8 +31,8 @@ You may install from PyPI.
    # Install this tool
    pip install slidetextbridge
 
-Configuration
--------------
+Configuration File
+------------------
 
 ``slidetextbridge`` uses a YAML file (e.g., ``config.yaml``) to define a pipeline of steps.
 Each step in the pipeline processes text in some way,
