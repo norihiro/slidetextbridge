@@ -1,0 +1,11 @@
+{
+	"versions": [
+		{ "version": "0.1.0", "display": "0.1.0"},
+		{ "version": "latest", "display": "Latest"},
+		{ "version": "devel", "display": "Developing"}
+	],
+	"languages": [
+		{ "language": "", "display": "English"},
+		{ "language": "ja", "display": "Japanese"}
+	]
+}
