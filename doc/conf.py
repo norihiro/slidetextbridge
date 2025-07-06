@@ -30,6 +30,9 @@ html_theme_options = {
             'Source Code': 'https://github.com/norihiro/slidetextbridge/',
         },
 }
+html_js_files = [
+        'switcher.js',
+]
 
 gettext_compact = True
 
