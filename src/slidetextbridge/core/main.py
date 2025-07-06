@@ -28,7 +28,15 @@ def _setup_ctx(cfgs):
 async def _loop(ctx):
     await ctx.initialize_all()
     while True:
-        await asyncio.sleep(1)
+        tt = list(asyncio.all_tasks())
+        tt.remove(asyncio.current_task())
+        if not tt:
+            break
+        rr = await asyncio.gather(*tt, return_exceptions=True)
+        for t, r in zip(tt, rr):
+            if isinstance(r, Exception):
+                logging.getLogger(__name__).error('%s: Unknown exception %s', t, r)
+    logging.getLogger(__name__).info('All tasks are done.')
 
 def main():
     'The entry point'
