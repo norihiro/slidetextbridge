@@ -12,7 +12,7 @@ with open('requirements.txt', 'rt', encoding='ascii') as f:
 
 setuptools.setup(
         name = 'slidetextbridge',
-        version='0.1.0',
+        version='0.2.0',
         description=short_description,
         long_description=long_description,
         long_description_content_type='text/markdown',
