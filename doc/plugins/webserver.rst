@@ -8,11 +8,11 @@ The text will be updated in realtime.
 
 **Parameters:**
 
-:host (string, optional): The listening host. The default is ``localhost``. Set ``0.0.0.0`` if you want to view from another computer.
-:port (integer, optional): The listening port. The default is ``8080``.
-:index_html (string, optional): Overwrite the HTML contents.
-:script_js (string, optional): Overwrite the JavaScript contents.
-:style_css (string, optional): Overwrite the style sheet contents.
+:``host`` (string, optional): The listening host. The default is ``localhost``. Set ``0.0.0.0`` if you want to view from another computer.
+:``port`` (integer, optional): The listening port. The default is ``8080``.
+:``index_html`` (string, optional): Overwrite the HTML contents.
+:``script_js`` (string, optional): Overwrite the JavaScript contents.
+:``style_css`` (string, optional): Overwrite the style sheet contents.
 
 **YAML Example:**
 

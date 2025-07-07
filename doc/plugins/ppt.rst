@@ -8,8 +8,8 @@ It is designed to be an input source, meaning it's usually the first step in the
 
 **Parameters:**
 
-:placeholder_only (boolean, optional): Select only placeholder shapes. True by default.
-:poll_wait_time (float, optional): Set the wait time for each polling in seconds. 0.1 seconds by default.
+:``placeholder_only`` (boolean, optional): Select only placeholder shapes. True by default.
+:``poll_wait_time`` (float, optional): Set the wait time for each polling in seconds. 0.1 seconds by default.
 
 What is placeholder?
   Placeholders mean the shapes that comes from the slide master,

@@ -7,9 +7,9 @@ This step filters lines.
 
 **Parameters:**
 
-:patterns (list, required): Set the patterns to search and replace.
-:patterns[*].p (str, required): The pattern to search.
-:patterns[*].r (str, required): The text to be replaced with.
+:``patterns`` (list, required): Set the patterns to search and replace.
+:``patterns[*].p`` (str, required): The pattern to search.
+:``patterns[*].r`` (str, required): The text to be replaced with.
 
 ..
   TODO Describe more about substitution parameter, the pattern is searched line-by-line, etc.

@@ -7,8 +7,8 @@ This step just prints the text on console.
 
 **Parameters:**
 
-:json (boolean, optional): Print in JSON format. The default is false.
-:page_delimiter (string, optional): The delimiter between the slide pages. Default is ``\n\n`` (ie., one empty line).
+:``json`` (boolean, optional): Print in JSON format. The default is false.
+:``page_delimiter`` (string, optional): The delimiter between the slide pages. Default is ``\n\n`` (ie., one empty line).
 
 **YAML Example:**
 

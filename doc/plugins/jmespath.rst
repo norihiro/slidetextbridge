@@ -8,7 +8,7 @@ The filter engine is powered by JMESPath.
 
 **Parameters:**
 
-:filter (string, required): Set the filter in JMESPath format
+:``filter`` (string, required): Set the filter in JMESPath format
 
 **YAML Example:**
 

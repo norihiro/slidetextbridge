@@ -9,9 +9,9 @@ This step reads text from `OpenLP`_ an open source church presentation and lyric
 
 **Parameters:**
 
-:host (string, optional): Set the host name communicate with. Default is ``localhost``.
-:port (integer, optional): Set the port number that OpenLP is listening on. Default is ``4316``.
-:port_ws (integer, optional): Set the port number that OpenLP is listening on for websocket. Default is ``port_ws`` + 1, ie. ``4317``.
+:``host`` (string, optional): Set the host name communicate with. Default is ``localhost``.
+:``port`` (integer, optional): Set the port number that OpenLP is listening on. Default is ``4316``.
+:``port_ws`` (integer, optional): Set the port number that OpenLP is listening on for websocket. Default is ``port_ws`` + 1, ie. ``4317``.
 
 **YAML Example:**
 

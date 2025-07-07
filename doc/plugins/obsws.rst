@@ -9,9 +9,9 @@ Make sure OBS Studio version 28.0.0 or later so that obs-websocket is pre-instal
 
 **Parameters:**
 
-:url (string, required): The WebSocket URL for your OBS instance. The default is typically ``ws://localhost:4455/``.
-:password (string, optional): The password you have set in your OBS WebSocket Server Settings. If you have not set a password, you can leave this blank or omit it.
-:source_name (string, required): The exact name of the Text source in OBS that you want to update. For example, ``Text (GDI+)``, ``Live Subtitles``, etc.
+:``url`` (string, required): The WebSocket URL for your OBS instance. The default is typically ``ws://localhost:4455/``.
+:``password`` (string, optional): The password you have set in your OBS WebSocket Server Settings. If you have not set a password, you can leave this blank or omit it.
+:``source_name`` (string, required): The exact name of the Text source in OBS that you want to update. For example, ``Text (GDI+)``, ``Live Subtitles``, etc.
 
 **YAML Example:**
 
