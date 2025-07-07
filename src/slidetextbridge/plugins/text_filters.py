@@ -218,16 +218,11 @@ class RegexFilter(base.PluginBase):
         return '\n'.join(lines)
 
     async def update(self, slide, args):
-        if isinstance(slide, TextFilteredSlide):
-            d = slide.to_dict()
-            for shape in d['shapes']:
-                shape['text'] = self._filter_shape_text(shape['text'])
-        else:
-            texts = slide.to_texts()
-            shapes = [{
-                'text': self._filter_shape_text(t),
-                } for t in texts]
-            slide = TextFilteredSlide(data={'shapes': shapes}, parent=self)
+        texts = slide.to_texts()
+        shapes = [{
+            'text': self._filter_shape_text(t),
+            } for t in texts]
+        slide = TextFilteredSlide(data={'shapes': shapes}, parent=self)
         await self.emit(slide)
 
 
