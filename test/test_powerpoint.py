@@ -1,7 +1,7 @@
 import sys
 import types
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, AsyncMock
 
 mock_win32com_client = types.SimpleNamespace(Dispatch=lambda x: None)
 mock_win32com = types.SimpleNamespace(client=mock_win32com_client)
@@ -49,12 +49,12 @@ def mock_shape(text, shape_type=14, name='unnamed'):
 
     return shape
 
-class TestPowerPointCapture(unittest.TestCase):
+class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
     def test_type_name(self):
         self.assertEqual(powerpoint.PowerPointCapture.type_name(), 'ppt')
 
     @patch('win32com.client.Dispatch', autospec=True)
-    def test_update(self, MockDispatch):
+    async def test_update(self, MockDispatch):
         ctx = MagicMock()
 
         ppt = MagicMock()
@@ -65,7 +65,7 @@ class TestPowerPointCapture(unittest.TestCase):
 
         win = MagicMock()
         api_slide = MagicMock()
-        ppt.SlideShowWindows.Count.return_value = 1
+        ppt.SlideShowWindows.Count = 1
         ppt.SlideShowWindows.return_value = win
         win.View = MagicMock()
         win.View.State = 0
@@ -73,12 +73,19 @@ class TestPowerPointCapture(unittest.TestCase):
 
         api_slide.Shapes = [
                 mock_shape(text='a'),
+                mock_shape(text='b'),
         ]
+        api_slide.Shapes[1].Type = 13 # Not a placeholder
 
-        int_slide = obj._get_slide()
-        slide = powerpoint.PowerPointSlide(int_slide, cfg=obj.cfg)
+        obj.emit = AsyncMock()
 
-        self.assertEqual(int_slide, api_slide)
+        await obj._loop_once()
+
+        obj.emit.assert_called_once()
+        slide = obj.emit.call_args[0][0]
+
+        MockDispatch.assert_called_once_with('PowerPoint.Application')
+
         self.assertEqual(str(slide), 'a')
         # self.maxDiff = None
         d = slide.to_dict()
@@ -86,6 +93,91 @@ class TestPowerPointCapture(unittest.TestCase):
         self.assertEqual(d['shapes'][0]['text_frame']['text_range']['text'], 'a')
         # TODO: Check other fields. I should copy the expected data from actual PowerPoint.
 
+        self.assertEqual(slide.to_texts(), ['a'])
+
+        # Call again, Dispatch should not be called again.
+        await obj._loop_once()
+        MockDispatch.assert_called_once_with('PowerPoint.Application')
+
+    @patch('win32com.client.Dispatch', autospec=True)
+    async def test_dispatch_failure(self, MockDispatch):
+        ctx = MagicMock()
+
+        MockDispatch.side_effect = mock_pywintypes.com_error
+        MockDispatch.return_value = None
+
+        cfg = powerpoint.PowerPointCapture.config({})
+        obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+
+        obj.emit = AsyncMock()
+
+        await obj._loop_once()
+
+        self._assert_empty_slide(obj.emit)
+
+    @patch('win32com.client.Dispatch', autospec=True)
+    async def test_ppt_windows_count_exception(self, MockDispatch):
+        ctx = MagicMock()
+
+        ppt = MagicMock()
+        MockDispatch.return_value = ppt
+
+        cfg = powerpoint.PowerPointCapture.config({})
+        obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+
+        def _raise_error(*args, **kwargs):
+            raise mock_pywintypes.com_error
+        type(ppt.SlideShowWindows).Count = property(_raise_error)
+
+        obj.emit = AsyncMock()
+
+        await obj._loop_once()
+
+        self._assert_empty_slide(obj.emit)
+
+    @patch('win32com.client.Dispatch', autospec=True)
+    async def test_ppt_windows_count_0(self, MockDispatch):
+        ctx = MagicMock()
+
+        ppt = MagicMock()
+        MockDispatch.return_value = ppt
+
+        cfg = powerpoint.PowerPointCapture.config({})
+        obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+
+        ppt.SlideShowWindows.Count = 0
+
+        obj.emit = AsyncMock()
+
+        await obj._loop_once()
+
+        self._assert_empty_slide(obj.emit)
+
+    def _assert_empty_slide(self, mock_emit):
+        mock_emit.assert_called_once()
+        slide = mock_emit.call_args[0][0]
+        self.assertEqual(slide._slide, None)
+        self.assertEqual(slide._dict, None)
+
+    @patch('win32com.client.Dispatch', autospec=True)
+    def test_blank(self, MockDispatch):
+        ctx = MagicMock()
+
+        ppt = MagicMock()
+        MockDispatch.return_value = ppt
+
+        cfg = powerpoint.PowerPointCapture.config({})
+        obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+
+        win = MagicMock()
+        ppt.SlideShowWindows.Count = 1
+        ppt.SlideShowWindows.return_value = win
+        win.View = MagicMock()
+        win.View.State = powerpoint._Const.ppSlideShowBlackScreen
+
+        int_slide = obj._get_slide()
+
+        self.assertEqual(int_slide, None)
 
 
 if __name__ == "__main__":
