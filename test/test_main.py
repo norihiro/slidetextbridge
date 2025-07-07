@@ -11,9 +11,7 @@ class TestMainFailure(unittest.TestCase):
     @patch('logging.getLogger')
     def test_empty_config(self, mock_logger):
         with tempfile.NamedTemporaryFile(mode='w', delete_on_close=False) as fc:
-            fc.write('''
-            steps:
-             ''')
+            fc.write('steps:')
             fc.close()
 
             mock_logger.return_value = MagicMock()
@@ -44,6 +42,41 @@ class TestMainFailure(unittest.TestCase):
             self.assertNotEqual(ret, 0)
             self.assertIn('Cannot connect to the source', mock_error.call_args_list[0][0][0])
 
+    @patch('logging.getLogger')
+    def test_no_type(self, mock_logger):
+        with tempfile.NamedTemporaryFile(mode='w', delete_on_close=False) as fc:
+            fc.write('''
+            steps:
+              - json: true
+             ''')
+            fc.close()
+
+            mock_logger.return_value = MagicMock()
+            mock_error = mock_logger.return_value.error
+
+            with patch('sys.argv', ['test', '-c', fc.name]):
+                ret = main.main()
+
+            self.assertNotEqual(ret, 0)
+            self.assertIn('A field "type" is missing.', mock_error.call_args_list[0][0][0])
+
+    @patch('logging.getLogger')
+    def test_wrong_type(self, mock_logger):
+        with tempfile.NamedTemporaryFile(mode='w', delete_on_close=False) as fc:
+            fc.write('''
+            steps:
+              - type: invalid-type
+             ''')
+            fc.close()
+
+            mock_logger.return_value = MagicMock()
+            mock_error = mock_logger.return_value.error
+
+            with patch('sys.argv', ['test', '-c', fc.name]):
+                ret = main.main()
+
+            self.assertNotEqual(ret, 0)
+            self.assertIn('No such type', mock_error.call_args_list[0][0][0])
 
 if __name__ == '__main__':
     unittest.main()
