@@ -2,6 +2,7 @@ import sys
 import json
 import unittest
 from unittest.mock import MagicMock, patch, AsyncMock
+import aiohttp
 
 from slidetextbridge.plugins import openlp # pylint: disable=C0413
 
@@ -131,6 +132,75 @@ class TestOpenLPCapture(unittest.IsolatedAsyncioTestCase):
                 request = mockRequest
         )):
             await obj._loop_once()
+
+        obj.emit.assert_called_once()
+        slide_texts = obj.emit.call_args[0][0].to_texts()
+        self.assertEqual(slide_texts, [])
+
+    async def test_poll_failure(self):
+        ctx = MagicMock()
+
+        cfg = openlp.OpenLPCapture.config({})
+        obj = openlp.OpenLPCapture(ctx=ctx, cfg=cfg)
+
+        obj.emit = AsyncMock()
+
+        with _mock_poll(results=None) as mock_ws_connect:
+            mock_ws_connect.side_effect = (OSError('test'), )
+            with self.assertRaises(Exception):
+                await obj._loop_once()
+
+        obj.emit.assert_not_called()
+
+    async def test_poll_response_failure(self):
+        ctx = MagicMock()
+
+        cfg = openlp.OpenLPCapture.config({})
+        obj = openlp.OpenLPCapture(ctx=ctx, cfg=cfg)
+
+        poll_results = {
+                'counter': 4, 'service': 0, 'slide': 0, 'item': 'a121176e-5318-11f0-9697-6045cba385ca', 'twelve': True, 'blank': False, 'theme': False, 'display': False, 'version': 3, 'isSecure': False, 'chordNotation': 'english'
+        }
+
+        mockTCPConnector = MagicMock()
+        mockRequest = AsyncMock()
+
+        obj.emit = AsyncMock()
+        obj.logger = MagicMock()
+
+        with _mock_poll(results=None) as mock_ws_connect:
+            mock_ws_connect.return_value.recv.side_effect = (OSError('test'), )
+            await obj._loop_once()
+
+        self.assertIn('Failed to poll.', obj.logger.warning.call_args[0][0])
+
+        obj.emit.assert_called_once()
+        slide_texts = obj.emit.call_args[0][0].to_texts()
+        self.assertEqual(slide_texts, [])
+
+    async def test_request_failure(self):
+        ctx = MagicMock()
+
+        cfg = openlp.OpenLPCapture.config({})
+        obj = openlp.OpenLPCapture(ctx=ctx, cfg=cfg)
+
+        poll_results = {
+                'counter': 4, 'service': 0, 'slide': 0, 'item': 'a121176e-5318-11f0-9697-6045cba385ca', 'twelve': True, 'blank': False, 'theme': False, 'display': False, 'version': 3, 'isSecure': False, 'chordNotation': 'english'
+        }
+
+        mockTCPConnector = MagicMock()
+
+        obj.emit = AsyncMock()
+        obj.logger = MagicMock()
+
+        with (
+            _mock_poll(poll_results),
+            patch('aiohttp.TCPConnector', mockTCPConnector),
+            patch('aiohttp.request', side_effect=aiohttp.client_exceptions.ClientOSError('test-exception')),
+        ):
+            await obj._loop_once()
+
+        self.assertIn('Failed to get live-items.', obj.logger.warning.call_args[0][0])
 
         obj.emit.assert_called_once()
         slide_texts = obj.emit.call_args[0][0].to_texts()
