@@ -88,11 +88,12 @@ class OpenLPCapture(base.PluginBase):
             await self._connect_ws()
         try:
             res = await self._conn_ws.recv()
+            return json.loads(res)
         except Exception as e: # pylint: disable=W0718
             await self._conn_ws.close()
             self._conn_ws = None
             self.logger.warning('Failed to poll. %s', e)
-        return json.loads(res)
+            return None
 
     async def _cache_current_item(self):
         live_items = json.loads(await self._olp_get('/api/v2/controller/live-items'))
@@ -110,7 +111,8 @@ class OpenLPCapture(base.PluginBase):
             if item_uuid not in self._cache:
                 try:
                     await self._cache_current_item()
-                except aiohttp.client_exceptions.ClientOSError:
+                except aiohttp.client_exceptions.ClientOSError as e:
+                    self.logger.warning('Failed to get live-items. %s', e)
                     return None
             if item_uuid in self._cache:
                 current_item = self._cache[item_uuid]
