@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 from slidetextbridge.core import main
 
 @unittest.skipUnless(sys.version_info >= (3, 12), 'Requires Python >= 3.12')
-class TestContext(unittest.TestCase):
+class TestMainFailure(unittest.TestCase):
 
     @patch('logging.getLogger')
     def test_empty_config(self, mock_logger):
