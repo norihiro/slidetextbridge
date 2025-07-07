@@ -50,19 +50,27 @@ class PowerPointCapture(base.PluginBase):
     async def _loop(self):
         while True:
             try:
-                slide = self._get_slide()
-                if slide != self._last_slide:
-                    self._last_slide = slide
-                    await self.emit(PowerPointSlide(slide, cfg=self.cfg))
-
-                await asyncio.sleep(self.cfg.poll_wait_time)
+                await self._loop_once()
             except Exception as e:
                 self.logger.error('Unknown error: %s', e)
                 await asyncio.sleep(1)
 
+    async def _loop_once(self):
+        slide = self._get_slide()
+        if slide != self._last_slide:
+            self._last_slide = slide
+            await self.emit(PowerPointSlide(slide, cfg=self.cfg))
+
+        await asyncio.sleep(self.cfg.poll_wait_time)
+
     def _connect_ppt(self):
         self.logger.info('Connecting to PowerPoint...')
-        self.ppt = win32com.client.Dispatch("PowerPoint.Application")
+        try:
+            self.ppt = win32com.client.Dispatch('PowerPoint.Application')
+        except pywintypes.com_error as e:
+            self.logger.error('Failed to dispatch PowerPoint. Check PowerPoint installation. %s', e)
+            self.ppt = None
+            return
         self._last_window = None
         if self.ppt:
             self.logger.info('Connected to PowerPoint.')
