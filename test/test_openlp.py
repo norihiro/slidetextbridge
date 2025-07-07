@@ -30,6 +30,21 @@ class TestOpenLPCapture(unittest.IsolatedAsyncioTestCase):
     def test_type_name(self):
         self.assertEqual(openlp.OpenLPCapture.type_name(), 'openlp')
 
+    async def test_loop(self):
+        ctx = MagicMock()
+        cfg = openlp.OpenLPCapture.config({})
+        obj = openlp.OpenLPCapture(ctx=ctx, cfg=cfg)
+
+        obj._loop_once = AsyncMock()
+        obj._loop_once.side_effect = (None, )
+        obj.logger = MagicMock()
+        with patch('asyncio.sleep', side_effect=(None, )) as mock_sleep:
+            with self.assertRaises(StopAsyncIteration):
+                await obj._loop()
+
+        self.assertEqual(obj._loop_once.await_count, 3)
+        self.assertEqual(mock_sleep.await_count, 2)
+
     async def test_text(self):
         ctx = MagicMock()
 
