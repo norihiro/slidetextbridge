@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Slide Text Bridge &#8212; Slide Text Bridge  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=4eb6406d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/switcher.js?v=b6330db2"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="入門" href="getting-started.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="slide-text-bridge">
+<h1>Slide Text Bridge<a class="headerlink" href="#slide-text-bridge" title="Link to this heading">¶</a></h1>
+<section id="key-features">
+<h2>特徴<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Microsoft PowerPointとLibreOffice Impressからライブスライドショーのテキストをキャプチャ</p></li>
+<li><p>JMESPath を使用したメタデータによるテキスト選択、改行調整、正規表現によるテキスト置き換えなどの強力なフィルタ</p></li>
+<li><p>OBS StudioやvMixなどのライブストリーミングアプリケーションにテキストを送信</p></li>
+</ul>
+<p>画像による例については <a class="reference external" href="https://github.com/norihiro/slidetextbridge/wiki/Gallery">Galley</a> を参照してください。</p>
+</section>
+<section id="contents">
+<h2>目次<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">ユーザーガイド</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">入門</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#for-windows-users-recommended">Windowsユーザー向け (推奨)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#from-pypi-other-platforms">PyPI から (他のプラットフォーム)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#configuration-file">設定ファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#running-the-program">プログラムの実行</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">設定ファイルリファレンス</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#top-level-structure">トップレベルの構造</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#step-types">ステップの種類</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/index.html">ステップの種類</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plugins/ppt.html">Input Step: <cite>ppt</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/impress.html">Input Step: <cite>impress</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/openlp.html">Input Step: <cite>openlp</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/jmespath.html">Filter Step: <cite>jmespath</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/linebreak.html">Filter Step: <cite>linebreak</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/regex.html">Filter Step: <cite>regex</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/stdout.html">Filter Step: <cite>stdout</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/obsws.html">Output Step: <cite>obsws</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/webserver.html">Output Step: <cite>webserver</cite></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#no-text-appears-in-obs">No text appears in OBS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#obs-connection-failed">OBS connection failed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#powerpoint-not-detected">PowerPoint not detected</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#text-does-not-update-when-slides-change">Text does not update when slides change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#program-window-doesn-t-appear">Program window doesn't appear</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#text-contains-strange-characters-or-formatting">Text contains strange characters or formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#still-stuck">Still stuck?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Slide Text Bridge</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>ナビゲーション</h3>
+<p class="caption" role="heading"><span class="caption-text">ユーザーガイド</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">設定ファイルリファレンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/index.html">ステップの種類</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://github.com/norihiro/slidetextbridge/wiki/Gallery">Gallery</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/norihiro/slidetextbridge/">Source Code</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="getting-started.html" title="次の章へ">入門</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      
+      
+      
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
