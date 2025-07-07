@@ -66,7 +66,10 @@ class OpenLPCapture(base.PluginBase):
 
     async def _connect_ws(self):
         url = f'ws://{self.cfg.host}:{self.cfg.port_ws:d}/poll'
-        self._conn_ws = await websockets.connect(url)
+        try:
+            self._conn_ws = await websockets.connect(url)
+        except OSError as e:
+            raise OSError(f'Failed to connect to {url}. {str(e)}') from e
 
     async def _disconnect(self):
         if self._conn:
