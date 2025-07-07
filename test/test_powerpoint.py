@@ -53,6 +53,21 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
     def test_type_name(self):
         self.assertEqual(powerpoint.PowerPointCapture.type_name(), 'ppt')
 
+    async def test_loop(self):
+        ctx = MagicMock()
+        cfg = powerpoint.PowerPointCapture.config({})
+        obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+
+        obj._loop_once = AsyncMock()
+        obj._loop_once.side_effect = (None, )
+        obj.logger = MagicMock()
+        with patch('asyncio.sleep', side_effect=(None, )) as mock_sleep:
+            with self.assertRaises(StopAsyncIteration):
+                await obj._loop()
+
+        self.assertEqual(obj._loop_once.await_count, 3)
+        self.assertEqual(mock_sleep.await_count, 2)
+
     @patch('win32com.client.Dispatch', autospec=True)
     async def test_update(self, MockDispatch):
         ctx = MagicMock()
