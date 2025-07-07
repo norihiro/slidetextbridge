@@ -25,6 +25,7 @@ class Context:
             for inst in self.instances:
                 if inst.name == name:
                     return inst
+            raise KeyError(name)
         return self.instances[-1]
 
     async def initialize_all(self):
