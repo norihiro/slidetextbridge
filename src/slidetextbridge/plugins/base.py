@@ -40,8 +40,12 @@ class PluginBase:
         :param name:  The name of the source
         :param args:  The argument that will be passed to `update` callback
         '''
-        src = self.ctx.get_instance(name=name)
-        return src.add_sink(self, args=args)
+        try:
+            src = self.ctx.get_instance(name=name)
+            return src.add_sink(self, args=args)
+        except (IndexError, KeyError) as e:
+            self.logger.error('Cannot connect to the source. %s', e)
+            raise e
 
     def add_sink(self, sink, args=None):
         '''
