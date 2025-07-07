@@ -44,32 +44,32 @@
 <p><strong>パラメータ:</strong></p>
 <p>これらのパラメータは、図形や行を結合する方法を制御します。</p>
 <dl class="field-list simple">
-<dt class="field-odd">shape_delimiter (string, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">shape_delimiter</span></code> (string, 任意)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>図形の間の区切り文字を設定します。デフォルトは <code class="docutils literal notranslate"><span class="pre">\n</span></code> です。</p>
 </dd>
-<dt class="field-even">line_delimiter (string, optional)<span class="colon">:</span></dt>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">line_delimiter</span></code> (string, 任意)<span class="colon">:</span></dt>
 <dd class="field-even"><p>図形内の行の間の区切り文字を設定します。デフォルトは <code class="docutils literal notranslate"><span class="pre">\n</span></code> です。</p>
 </dd>
-<dt class="field-odd">strip (boolean, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">strip</span></code> (boolean, 任意)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>行を結合する前に、各行の先頭と末尾のスペースを取り除きます。デフォルトは <code class="docutils literal notranslate"><span class="pre">true</span></code> です。</p>
 </dd>
 </dl>
 <p>例えば、複数の行を1つにしたい場合は、 <code class="docutils literal notranslate"><span class="pre">line_delimiter</span></code> を <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code> (単なるスペース) に設定してください。</p>
 <p>以下のパラメータは、行の分割や結合を制御、すなわち改行位置の調整を行います。CJK(中国語、日本語、韓国語)に最適です。</p>
 <dl class="field-list simple">
-<dt class="field-odd">split_long_line (integer, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">split_long_line</span></code> (integer, 任意)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>長い行を分割する際のしきい値。デフォルトは <code class="docutils literal notranslate"><span class="pre">0</span></code> で、分割を行いません。</p>
 </dd>
-<dt class="field-even">split_nowrap (string, optional)<span class="colon">:</span></dt>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">split_nowrap</span></code> (string, 任意)<span class="colon">:</span></dt>
 <dd class="field-even"><p>分割する際に、直前で分割を行わない文字を設定します。ご使用の言語での句読点を設定してください。デフォルトは <code class="docutils literal notranslate"><span class="pre">.,&quot;'</span></code> ですが <code class="docutils literal notranslate"><span class="pre">'、。」』,.'</span></code> などを設定することを推奨します。</p>
 </dd>
-<dt class="field-odd">split_nowrap_allow_overflow (boolean, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">split_nowrap_allow_overflow</span></code> (boolean, 任意)<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">split_nowrap</span></code> で設定した文字がオーバーフローする場合、オプションはオーバーフローを許可するかどうかを制御します。デフォルトは <code class="docutils literal notranslate"><span class="pre">true</span></code> です。</p>
 </dd>
-<dt class="field-even">joined_column_max (integer, optional)<span class="colon">:</span></dt>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">joined_column_max</span></code> (integer, 任意)<span class="colon">:</span></dt>
 <dd class="field-even"><p>短い行を結合する際のしきい値。デフォルトは <code class="docutils literal notranslate"><span class="pre">0</span></code> で、結合を行いません。</p>
 </dd>
-<dt class="field-odd">join_by (string, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">join_by</span></code> (string, 任意)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>短い行を結合する際の区切り文字。デフォルトは <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code> です。</p>
 </dd>
 </dl>

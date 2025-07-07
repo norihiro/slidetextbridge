@@ -43,13 +43,13 @@
 <p><strong>Parameters:</strong></p>
 <p>These parameters control how to concatinate shapes and lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">shape_delimiter (string, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">shape_delimiter</span></code> (string, optional)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Delimiter when concatinating shapes. Default is <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
 </dd>
-<dt class="field-even">line_delimiter (string, optional)<span class="colon">:</span></dt>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">line_delimiter</span></code> (string, optional)<span class="colon">:</span></dt>
 <dd class="field-even"><p>Delimiter when concatinating lines in a shape. Default is <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
 </dd>
-<dt class="field-odd">strip (boolean, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">strip</span></code> (boolean, optional)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Before concatinating lines, strip leading and trailing spaces from each line. Default is true.</p>
 </dd>
 </dl>
@@ -57,19 +57,19 @@
 <p>These parameters control splitting a line and joining lines.
 Ideal target languages are CJK (Chinese, Japanese, and Korean).</p>
 <dl class="field-list simple">
-<dt class="field-odd">split_long_line (integer, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">split_long_line</span></code> (integer, optional)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Threshold number when splitting a long line. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>, do not split.</p>
 </dd>
-<dt class="field-even">split_nowrap (string, optional)<span class="colon">:</span></dt>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">split_nowrap</span></code> (string, optional)<span class="colon">:</span></dt>
 <dd class="field-even"><p>Characters that the split should not happen just before them. Set punctuations in your language. Default is <code class="docutils literal notranslate"><span class="pre">.,&quot;'</span></code>.</p>
 </dd>
-<dt class="field-odd">split_nowrap_allow_overflow (boolean, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">split_nowrap_allow_overflow</span></code> (boolean, optional)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>When a character in <code class="docutils literal notranslate"><span class="pre">split_nowrap</span></code> is overflowing, the option controls the overflow is allowed or not. Default is true.</p>
 </dd>
-<dt class="field-even">joined_column_max (integer, optional)<span class="colon">:</span></dt>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">joined_column_max</span></code> (integer, optional)<span class="colon">:</span></dt>
 <dd class="field-even"><p>Threshold number when joining short lines. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>, do not join.</p>
 </dd>
-<dt class="field-odd">join_by (string, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">join_by</span></code> (string, optional)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Delimiter when joining short lines. Default is a space <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code>.</p>
 </dd>
 </dl>
