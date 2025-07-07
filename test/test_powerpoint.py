@@ -115,6 +115,65 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
         MockDispatch.assert_called_once_with('PowerPoint.Application')
 
     @patch('win32com.client.Dispatch', autospec=True)
+    async def test_multi_windows(self, MockDispatch):
+        ctx = MagicMock()
+
+        ppt = MagicMock()
+        MockDispatch.return_value = ppt
+
+        cfg = powerpoint.PowerPointCapture.config({})
+        obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+
+        win1 = MagicMock()
+        api_slide = MagicMock()
+        win1.View = MagicMock()
+        win1.View.State = 0
+        win1.View.Slide = api_slide
+        win1.Active = False
+
+        api_slide.Shapes = [
+                mock_shape(text='win1-shape'),
+        ]
+
+        win2 = MagicMock()
+        api_slide = MagicMock()
+        win2.View = MagicMock()
+        win2.View.State = 0
+        win2.View.Slide = api_slide
+        win2.Active = True
+
+        api_slide.Shapes = [
+                mock_shape(text='win2-shape'),
+        ]
+
+        ppt.SlideShowWindows.Count = 2
+        ppt.SlideShowWindows.side_effect = (win1, win2)
+
+        obj.emit = AsyncMock()
+
+        await obj._loop_once()
+
+        obj.emit.assert_called_once()
+        slide = obj.emit.call_args[0][0]
+
+        self.assertEqual(str(slide), 'win2-shape')
+
+        ppt.SlideShowWindows.Count = 2
+        ppt.SlideShowWindows.side_effect = (win1, win2)
+        api_slide = MagicMock()
+        win2.Active = False
+        win2.View.Slide = api_slide
+        api_slide.Shapes = [
+                mock_shape(text='win2-shape modified'),
+        ]
+
+        obj.emit = AsyncMock()
+        await obj._loop_once()
+        obj.emit.assert_called_once()
+        slide = obj.emit.call_args[0][0]
+        self.assertEqual(str(slide), 'win2-shape modified')
+
+    @patch('win32com.client.Dispatch', autospec=True)
     async def test_dispatch_failure(self, MockDispatch):
         ctx = MagicMock()
 
