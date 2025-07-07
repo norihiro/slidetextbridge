@@ -71,14 +71,6 @@ class OpenLPCapture(base.PluginBase):
         except OSError as e:
             raise OSError(f'Failed to connect to {url}. {str(e)}') from e
 
-    async def _disconnect(self):
-        if self._conn:
-            await self._conn.close()
-            self._conn = None
-        if self._conn_ws:
-            self._conn_ws.close()
-            self._conn_ws = None
-
     async def _olp_get(self, url):
         if not self._conn:
             await self._connect()
