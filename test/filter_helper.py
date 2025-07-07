@@ -25,7 +25,12 @@ async def run_filter(cls, cfg, slide=None, slides=None):
 
     ret = []
     for slide in slides:
+        slide_text_orig = '\n'.join(slide.to_texts())
         await filter_obj.update(slide, args=None)
         ret.append(filter_obj.emit.await_args[0][0])
+        slide_text_new = '\n'.join(slide.to_texts())
+        if slide_text_orig != slide_text_new:
+            raise ValueError('The original slide has changed: ' +\
+                    f'"{slide_text_orig}" -> "{slide_text_new}"')
 
     return ret
