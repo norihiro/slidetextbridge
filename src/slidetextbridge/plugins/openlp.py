@@ -9,6 +9,7 @@ import aiohttp
 import aiohttp.client_exceptions
 import websockets
 from slidetextbridge.core import config
+from slidetextbridge.core.logging import HideSameLogFilter
 from . import base
 
 
@@ -50,6 +51,7 @@ class OpenLPCapture(base.PluginBase):
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
         self.logger = logging.getLogger(f'openlp({self.cfg.location})')
+        self.logger.addFilter(HideSameLogFilter())
 
         self._conn = None
         self._conn_ws = None
@@ -130,16 +132,11 @@ class OpenLPCapture(base.PluginBase):
         asyncio.create_task(self._loop())
 
     async def _loop(self):
-        last_error = None
         while True:
             try:
                 await self._loop_once()
-                last_error = None
             except Exception as e:
-                error = str(e)
-                if error != last_error:
-                    self.logger.warning('%s', error)
-                    last_error = error
+                self.logger.warning('%s', e)
                 await asyncio.sleep(3)
 
 
