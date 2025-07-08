@@ -15,6 +15,7 @@ and sends it to OBS Studio *Text Source* or vMix *Browser Input*.
 - Captures live slideshow from these tools
   - Microsoft PowerPoint
   - LibreOffice Impress
+  - [OpenLP](https://openlp.org/)
 - Filters
   - Selects shapes by placeholder, size, etc. powered by [JMESPath](https://jmespath.org/).
   - Line break adjustment.
