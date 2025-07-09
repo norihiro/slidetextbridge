@@ -30,6 +30,15 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller pip-licenses
 
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: pyinstaller
         shell: pwsh
         run: |
