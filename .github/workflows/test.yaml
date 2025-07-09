@@ -22,18 +22,31 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-test-${{ matrix.python-version }}-
+
       - name: Install dependencies
         run: |
+          python -m venv .venv
+          . .venv/bin/activate
           python -m pip install --upgrade pip
           pip install coverage
           pip install -e .
 
       - name: Run unit test
         run: |
+          python -m venv .venv
+          . .venv/bin/activate
           python -m coverage run -m unittest discover -s test -v
 
       - name: Report coverage
         run: |
+          python -m venv .venv
+          . .venv/bin/activate
           report_args=(
             --omit='/usr/*,test/*'
           )

@@ -24,15 +24,25 @@ jobs:
         with:
           python-version: 3.13
 
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-package-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-package-
+
       - name: Install dependencies
         run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
           pip install pyinstaller pip-licenses
 
       - name: pyinstaller
         shell: pwsh
         run: |
+          .\.venv\Scripts\Activate.ps1
           pip install .
           $PyInstallerArgs = @(
             '--name', 'slidetextbridge'
@@ -42,6 +52,7 @@ jobs:
 
       - name: pip-licenses
         run: |
+          .\.venv\Scripts\Activate.ps1
           pip-licenses.exe --from=mixed --format=plain-vertical --with-license-file --no-license-path --output-file dist/slidetextbridge/LICENSES.txt
 
       - name: datafile
