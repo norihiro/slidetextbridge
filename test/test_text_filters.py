@@ -31,16 +31,16 @@ class TestTextFilters(unittest.IsolatedAsyncioTestCase):
         res = await run_filter(
                 text_filters.TextLinebreakFilter,
                 {'strip': True,},
-                make_slide(['A', 'B ', ' C ', ' D'])
+                make_slide(['A', 'B ', ' C ', ' D', 'E\n\nF'])
         )
-        self.assertEqual(res.to_texts(), ['A', 'B', 'C', 'D'])
+        self.assertEqual(res.to_texts(), ['A', 'B', 'C', 'D', 'E\nF'])
 
         res = await run_filter(
                 text_filters.TextLinebreakFilter,
                 {'strip': False,},
-                make_slide(['A', 'B ', ' C ', ' D'])
+                make_slide(['A', 'B ', ' C ', ' D', 'E\n\nF'])
         )
-        self.assertEqual(res.to_texts(), ['A', 'B ', ' C ', ' D'])
+        self.assertEqual(res.to_texts(), ['A', 'B ', ' C ', ' D', 'E\n\nF'])
 
     async def test_linebreak_filter_split_join(self):
 
