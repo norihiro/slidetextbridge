@@ -82,6 +82,10 @@ class ImpressCapture(base.PluginBase):
                 'com.sun.star.frame.Desktop', uno_inst)
 
     def _get_slide(self):
+        if not self._desktop:
+            self.logger.warning('No desktop is available')
+            return None
+
         c = self._desktop.getCurrentComponent()
         if not c:
             self.logger.info('Found no component. Probably, all windows have been closed.')
