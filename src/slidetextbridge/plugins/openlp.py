@@ -67,7 +67,7 @@ class OpenLPCapture(base.PluginBase):
     async def _connect_ws(self):
         url = f'ws://{self.cfg.host}:{self.cfg.port_ws:d}/poll'
         try:
-            self._conn_ws = await websockets.connect(url)
+            return await websockets.connect(url)
         except OSError as e:
             raise OSError(f'Failed to connect to {url}. {str(e)}') from e
 
@@ -82,7 +82,7 @@ class OpenLPCapture(base.PluginBase):
 
     async def _olp_poll(self):
         if not self._conn_ws:
-            await self._connect_ws()
+            self._conn_ws = await self._connect_ws()
         try:
             res = await self._conn_ws.recv()
             return json.loads(res)
@@ -132,6 +132,8 @@ class OpenLPCapture(base.PluginBase):
                 await self._loop_once()
             except Exception as e:
                 self.logger.warning('%s', e)
+                await asyncio.sleep(3)
+            if not self._conn_ws:
                 await asyncio.sleep(3)
 
 
