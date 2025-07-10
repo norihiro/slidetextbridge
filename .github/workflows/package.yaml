@@ -64,3 +64,28 @@ jobs:
         with:
           name: ${{ env.artifactName }}-windows
           path: dist/slidetextbridge.zip
+
+  pypi:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the package
+        run: |
+          python -m venv .venv-build
+          . .venv-build/bin/activate
+          pip install build
+          python -m build
+          ls -l dist/
+
+      - name: Install
+        run: |
+          python -m venv --system-site-packages .venv-test
+          . .venv-test/bin/activate
+          pip install ./dist/slidetextbridge-*.whl
+
+      - name: Test
+        run: |
+          . .venv-test/bin/activate
+          python -m unittest discover test/
