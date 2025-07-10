@@ -33,8 +33,8 @@ class OpenLPCapture(base.PluginBase):
     '''
     Get text from OpenLP
     '''
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         return 'openlp'
 
     @staticmethod

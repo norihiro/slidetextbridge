@@ -82,8 +82,8 @@ class WebServerEmitter(base.PluginBase):
     '''
     HTTP server to send text through HTTP
     '''
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         return 'webserver'
 
     @staticmethod

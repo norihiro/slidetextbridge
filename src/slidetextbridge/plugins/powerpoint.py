@@ -22,8 +22,8 @@ class PowerPointCapture(base.PluginBase):
     '''
     Get text from Microsoft PowerPoint
     '''
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         return 'ppt'
 
     @staticmethod

@@ -39,8 +39,8 @@ class TextLinebreakFilter(base.PluginBase):
     Filter line breaks in texts
     '''
 
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         return 'linebreak'
 
     @staticmethod

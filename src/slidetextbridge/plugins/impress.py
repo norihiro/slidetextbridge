@@ -14,8 +14,8 @@ class ImpressCapture(base.PluginBase):
     '''
     Get text from LibreOffice Impress
     '''
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         return 'impress'
 
     @staticmethod

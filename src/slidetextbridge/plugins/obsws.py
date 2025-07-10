@@ -11,8 +11,8 @@ class ObsWsEmitter(base.PluginBase):
     '''
     Emit text to OBS Studio
     '''
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         return 'obsws'
 
     @staticmethod

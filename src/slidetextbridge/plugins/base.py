@@ -21,10 +21,15 @@ class PluginBase:
     The base class for text sources, filters, and sinks.
     '''
 
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         'Return the name of the type'
         return 'base'
+
+    @staticmethod
+    def config(data):
+        'Return the config object'
+        raise NotImplementedError()
 
     def __init__(self, ctx, cfg=None):
         self.ctx = ctx

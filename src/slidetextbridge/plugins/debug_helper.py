@@ -13,8 +13,8 @@ class StdoutEmitter(base.PluginBase):
     '''
     Just print to stdout
     '''
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         return 'stdout'
 
     @staticmethod

@@ -11,8 +11,8 @@ class JMESPathFilter(base.PluginBase):
     '''
     Filter shapes with JMESPath
     '''
-    @classmethod
-    def type_name(cls):
+    @staticmethod
+    def type_name():
         return 'jmespath'
 
     @staticmethod
