@@ -12,22 +12,28 @@ async def run_filter(cls, cfg, slide=None, slides=None):
     if isinstance(cfg, dict):
         cfg = cls.config(cfg)
 
+    from slidetextbridge.plugins import base
+    src = base.PluginBase(ctx=ctx, cfg=MagicMock())
+    ctx.get_instance.return_value = src
+
     filter_obj = cls(ctx=ctx, cfg=cfg)
-    filter_obj.emit = AsyncMock()
+
+    mock_sink = AsyncMock()
+    filter_obj.add_sink(mock_sink, None)
 
     if (slide and slides) or (not slide and not slides):
         raise ValueError('Either slide or slides should be specified.')
 
     if slide:
-        await filter_obj.update(slide, args=None)
-        filter_obj.emit.assert_awaited_once()
-        return filter_obj.emit.await_args[0][0]
+        await src.emit(slide)
+        mock_sink.update.assert_awaited_once()
+        return mock_sink.update.await_args[0][0]
 
     ret = []
     for slide in slides:
         slide_text_orig = '\n'.join(slide.to_texts())
         await filter_obj.update(slide, args=None)
-        ret.append(filter_obj.emit.await_args[0][0])
+        ret.append(mock_sink.update.await_args[0][0])
         slide_text_new = '\n'.join(slide.to_texts())
         if slide_text_orig != slide_text_new:
             raise ValueError('The original slide has changed: ' +\
