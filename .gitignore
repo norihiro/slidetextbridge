@@ -2,3 +2,6 @@
 .*.sw?
 *.egg-info/
 __pycache__/
+.coverage
+/gh-pages/
+/wiki/
