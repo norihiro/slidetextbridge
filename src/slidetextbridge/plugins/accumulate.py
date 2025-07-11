@@ -4,6 +4,7 @@ Accumulate plugins
 
 import os
 import logging
+from . import base
 from . import text_filters
 from . import debug_helper
 
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 _is_win = os.name.startswith('nt')
 
-plugin_classes = []
+plugin_classes: list[type[base.PluginBase]] = []
 
 plugin_classes.append(text_filters.TextLinebreakFilter)
 plugin_classes.append(text_filters.RegexFilter)
