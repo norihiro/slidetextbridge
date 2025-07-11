@@ -184,7 +184,7 @@ def _parse_patterns(v):
     ret = []
     for pattern in v:
         cfg.parse(pattern)
-        ret.append((re.compile(cfg.p), cfg.r)) # pylint: disable=E1101
+        ret.append((re.compile(cfg.p), cfg.r)) # type: ignore[attr-defined] # pylint: disable=E1101
 
     return ret
 
