@@ -38,6 +38,13 @@ class TestJMESPathFilter(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(emitted_slide.to_dict(), {'shapes': [{'text': 'b', 'val': 2}]})
         self.assertEqual(emitted_slide.to_texts(), ['b', ])
 
+        # If nothing is filtered,
+        slide = TextFilteredSlide(data={'shapes': [{'text': 'a', 'val': 1}, {'text': 'b', 'val': 3}]})
+        await filter_obj.update(slide, args=None)
+        emitted_slide = filter_obj.emit.await_args[0][0]
+        self.assertEqual(emitted_slide.to_texts(), [])
+        self.assertEqual(emitted_slide.to_dict(), {'shapes': []})
+
         # TextFilteredSlide ignores shapes that does not contain the `text` field.
         slide = TextFilteredSlide(data={'shapes': [{'test': 'a', 'val': 1}, {'test': 'b', 'val': 2}]})
         await filter_obj.update(slide, args=None)
