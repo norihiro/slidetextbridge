@@ -29,7 +29,9 @@ async def _loop(ctx):
     await ctx.initialize_all()
     while True:
         tt = list(asyncio.all_tasks())
-        tt.remove(asyncio.current_task())
+        t = asyncio.current_task()
+        if t:
+            tt.remove(t)
         if not tt:
             break
         rr = await asyncio.gather(*tt, return_exceptions=True)
