@@ -1,3 +1,4 @@
+import os
 import sys
 import types
 import unittest
@@ -252,6 +253,18 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
         int_slide = obj._get_slide()
 
         self.assertEqual(int_slide, None)
+
+    def test_accumulate_powerpoint(self):
+        import importlib
+        with patch('os.name', 'nt-test'):
+            accumulate_name = 'slidetextbridge.plugins.accumulate'
+            if accumulate_name in sys.modules:
+                importlib.reload(sys.modules[accumulate_name])
+            else:
+                importlib.import_module(accumulate_name)
+            accumulate = sys.modules[accumulate_name]
+            self.assertEqual(accumulate._is_win, True)
+            self.assertIn('ppt', accumulate.plugins)
 
 
 if __name__ == "__main__":
