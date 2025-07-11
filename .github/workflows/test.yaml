@@ -32,6 +32,12 @@ jobs:
         run: |
           python -m coverage run --branch -m unittest discover -s test -v
 
+      - name: Run shell script test
+        run: |
+          for t in ./test/test_*.sh; do
+            EXE='python -m coverage run -a --branch -m slidetextbridge.core.main' $t
+          done
+
       - name: Report coverage
         run: |
           report_args=(
