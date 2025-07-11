@@ -80,7 +80,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
 
         mock_ws = AsyncMock()
         MockWebSocketClient.return_value = mock_ws
-        mock_ws.connect.side_effect = (Exception('could not connect'), )
+        mock_ws.connect.side_effect = (Exception('error test 1'), Exception('error test 2'))
         mock_ws.wait_until_identified.return_value = False
 
         obj = obsws.ObsWsEmitter(ctx=ctx, cfg=cfg)
@@ -93,7 +93,8 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_ws.wait_until_identified.assert_not_called()
         mock_ws.connect.assert_awaited()
         self._assert_logging(obj.logger.warning, (
-            ('Could not connect to %s. %s', cfg_url, 'could not connect'),
+            ('Could not connect to %s. %s', cfg_url, 'error test 1'),
+            ('Could not connect to %s. %s', cfg_url, 'error test 2'),
         ));
 
     @patch('simpleobsws.WebSocketClient', autospec=True)
@@ -126,10 +127,18 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_ws.wait_until_identified.assert_awaited()
         mock_ws.connect.assert_awaited()
         mock_ws.disconnect.assert_called_with()
-        # Probably, it's better to make a better log.
         self._assert_logging(obj.logger.warning, (
-            ('Failed to send text. %s', "'NoneType' object has no attribute 'call'"),
+            ('Could not connect to %s. %s', cfg.url, 'Identification error'),
         ));
+
+        # The 2nd attempt will successfully send the request.
+        mock_ws.call.assert_awaited_with(obsws.simpleobsws.Request(
+            'SetInputSettings',
+            {
+                'inputName': cfg_src_name,
+                'inputSettings': {'text': ''},
+            }
+        ))
 
 
     @patch('simpleobsws.WebSocketClient', autospec=True)
@@ -207,6 +216,45 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
             ('Failed to send text. %s', 'error 2'),
             ('Could not send text. %s', 'error 2'),
         ))
+
+    @patch('simpleobsws.WebSocketClient', autospec=True)
+    async def test_update_retry_connect_failure(self, MockWebSocketClient):
+        ctx = MagicMock()
+
+        cfg_src_name = 'test-source-name'
+        cfg = obsws.ObsWsEmitter.config({
+                'source_name': cfg_src_name
+        })
+
+        mock_ws = AsyncMock()
+        mock_res = MagicMock()
+        MockWebSocketClient.return_value = mock_ws
+        mock_ws.connect.side_effect = (None, Exception('connect error test'))
+        mock_ws.wait_until_identified.return_value = True
+        mock_ws.call.side_effect = (Exception('error 1'), mock_res)
+        mock_res.ok.return_value = True
+        mock_res.responseData = {'status': 'ok'}
+
+        obj = obsws.ObsWsEmitter(ctx=ctx, cfg=cfg)
+        obj.logger.warning = MagicMock()
+        ctx.get_instance.assert_called_once_with(name=None)
+
+        await obj.update(base.SlideBase(), args=None)
+
+        MockWebSocketClient.assert_called_with(url='ws://localhost:4455/', password=None)
+        mock_ws.connect.assert_awaited()
+        mock_ws.call.assert_awaited_with(obsws.simpleobsws.Request(
+            'SetInputSettings',
+            {
+                'inputName': cfg_src_name,
+                'inputSettings': {'text': ''},
+            }
+        ))
+        self._assert_logging(obj.logger.warning, (
+            ('Failed to send text. %s', 'error 1'),
+            ('Could not connect to %s. %s', cfg.url, 'connect error test'),
+        ))
+        self.assertEqual(obj.ws, None)
 
     @patch('simpleobsws.WebSocketClient', autospec=True)
     async def test_wrong_source_name(self, MockWebSocketClient):

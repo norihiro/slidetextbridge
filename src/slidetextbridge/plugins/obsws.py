@@ -38,6 +38,7 @@ class ObsWsEmitter(base.PluginBase):
         if not await self.ws.wait_until_identified():
             self.ws.disconnect()
             self.ws = None
+            raise ConnectionError('Identification error')
 
     async def update(self, slide, args):
         if not slide:
@@ -46,14 +47,6 @@ class ObsWsEmitter(base.PluginBase):
             text = slide
         else:
             text = str(slide)
-
-        try:
-            if not self.ws:
-                await self._ws_connect()
-        except Exception as e:
-            self.logger.warning('Could not connect to %s. %s', self.cfg.url, e)
-            self.ws = None
-            return
 
         try:
             await self._send_request('SetInputSettings', {
@@ -67,6 +60,18 @@ class ObsWsEmitter(base.PluginBase):
     async def _send_request(self, req, data, retry=2):
         while retry > 0:
             retry -= 1
+
+            if not self.ws:
+                try:
+                    await self._ws_connect()
+                except Exception as e:
+                    self.logger.warning('Could not connect to %s. %s', self.cfg.url, e)
+                    self.ws = None
+            if not self.ws:
+                if retry > 0:
+                    self.logger.info('Retrying to connect...')
+                continue
+
             try:
                 res = await self.ws.call(simpleobsws.Request(req, data))
                 if res.ok():
@@ -79,13 +84,10 @@ class ObsWsEmitter(base.PluginBase):
 
                 try:
                     await self.ws.disconnect()
-                    self.ws = None
-                except: # pylint: disable=W0702
-                    pass
+                except Exception as e1:
+                    self.logger.warning('Disconnect failed. %s', e1)
+                self.ws = None
+
                 if retry == 0:
                     raise e
-                try: # pylint: disable=W0702
-                    await self._ws_connect()
-                except:
-                    self.ws = None
                 self.logger.info('Retrying...')
