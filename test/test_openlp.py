@@ -37,6 +37,7 @@ class TestOpenLPCapture(unittest.IsolatedAsyncioTestCase):
 
         obj._loop_once = AsyncMock()
         obj._loop_once.side_effect = (None, )
+        obj._conn_ws = True
         obj.logger = MagicMock()
         with patch('asyncio.sleep', side_effect=(None, )) as mock_sleep:
             with self.assertRaises(StopAsyncIteration):
