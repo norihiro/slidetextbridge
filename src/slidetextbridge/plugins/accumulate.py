@@ -16,6 +16,7 @@ plugin_classes: list[type[base.PluginBase]] = []
 
 plugin_classes.append(text_filters.TextLinebreakFilter)
 plugin_classes.append(text_filters.RegexFilter)
+plugin_classes.append(debug_helper.StdinCapture)
 plugin_classes.append(debug_helper.StdoutEmitter)
 
 try:
