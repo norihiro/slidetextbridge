@@ -84,7 +84,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_ws.wait_until_identified.return_value = False
 
         obj = obsws.ObsWsEmitter(ctx=ctx, cfg=cfg)
-        obj.logger.warning = MagicMock()
+        obj.logger = MagicMock()
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update(None, args=None)
@@ -95,7 +95,11 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         self._assert_logging(obj.logger.warning, (
             ('Could not connect to %s. %s', cfg_url, 'error test 1'),
             ('Could not connect to %s. %s', cfg_url, 'error test 2'),
-        ));
+        ))
+        self._assert_logging(obj.logger.info, (
+            ('Retrying to connect...', ),
+        ))
+        obj.logger.error.assert_not_called()
 
     @patch('simpleobsws.WebSocketClient', autospec=True)
     async def test_identify_failure(self, MockWebSocketClient):
@@ -118,7 +122,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_ws.disconnect = MagicMock()
 
         obj = obsws.ObsWsEmitter(ctx=ctx, cfg=cfg)
-        obj.logger.warning = MagicMock()
+        obj.logger = MagicMock()
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update('', args=None)
@@ -129,7 +133,11 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_ws.disconnect.assert_called_with()
         self._assert_logging(obj.logger.warning, (
             ('Could not connect to %s. %s', cfg.url, 'Identification error'),
-        ));
+        ))
+        self._assert_logging(obj.logger.info, (
+            ('Retrying to connect...', ),
+        ))
+        obj.logger.error.assert_not_called()
 
         # The 2nd attempt will successfully send the request.
         mock_ws.call.assert_awaited_with(obsws.simpleobsws.Request(
@@ -160,7 +168,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_res.responseData = {'status': 'ok'}
 
         obj = obsws.ObsWsEmitter(ctx=ctx, cfg=cfg)
-        obj.logger.warning = MagicMock()
+        obj.logger = MagicMock()
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update('test text', args=None)
@@ -176,7 +184,11 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         ))
         self._assert_logging(obj.logger.warning, (
             ('Failed to send text. %s', 'error 1'),
-        ));
+        ))
+        self._assert_logging(obj.logger.info, (
+            ('Retrying...', ),
+        ))
+        obj.logger.error.assert_not_called()
 
     @patch('simpleobsws.WebSocketClient', autospec=True)
     async def test_update_retry_2(self, MockWebSocketClient):
@@ -197,7 +209,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_res.responseData = {'status': 'ok'}
 
         obj = obsws.ObsWsEmitter(ctx=ctx, cfg=cfg)
-        obj.logger.warning = MagicMock()
+        obj.logger = MagicMock()
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update(base.SlideBase(), args=None)
@@ -216,6 +228,10 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
             ('Failed to send text. %s', 'error 2'),
             ('Could not send text. %s', 'error 2'),
         ))
+        self._assert_logging(obj.logger.info, (
+            ('Retrying...', ),
+        ))
+        obj.logger.error.assert_not_called()
 
     @patch('simpleobsws.WebSocketClient', autospec=True)
     async def test_update_retry_connect_failure(self, MockWebSocketClient):
@@ -236,7 +252,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         mock_res.responseData = {'status': 'ok'}
 
         obj = obsws.ObsWsEmitter(ctx=ctx, cfg=cfg)
-        obj.logger.warning = MagicMock()
+        obj.logger = MagicMock()
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update(base.SlideBase(), args=None)
@@ -254,6 +270,10 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
             ('Failed to send text. %s', 'error 1'),
             ('Could not connect to %s. %s', cfg.url, 'connect error test'),
         ))
+        self._assert_logging(obj.logger.info, (
+            ('Retrying...', ),
+        ))
+        obj.logger.error.assert_not_called()
         self.assertEqual(obj.ws, None)
 
     @patch('simpleobsws.WebSocketClient', autospec=True)

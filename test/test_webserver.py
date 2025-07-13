@@ -1,4 +1,5 @@
 import unittest
+import logging
 from unittest.mock import MagicMock, patch, AsyncMock
 from aiohttp.test_utils import AioHTTPTestCase
 
@@ -7,6 +8,23 @@ from slidetextbridge.plugins import webserver
 # https://docs.aiohttp.org/en/stable/testing.html#unittest
 
 class TestWebServerEmitter(AioHTTPTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls._orig_log_level = {}
+        for name in ('aiohttp', 'asyncio'):
+            logger = logging.getLogger(name)
+            cls._orig_log_level[name] = logger.level
+            logger.setLevel(logging.WARNING)
+
+    @classmethod
+    def tearDownClass(cls):
+        for name, level in cls._orig_log_level.items():
+            logging.getLogger(name).setLevel(level)
+
+        super().tearDownClass()
 
     def test_type_name(self):
         self.assertEqual(webserver.WebServerEmitter.type_name(), 'webserver')
@@ -42,7 +60,9 @@ class TestWebServerEmitter(AioHTTPTestCase):
                 TCPSite=mockTCPSite,
         ):
             obj = webserver.WebServerEmitter(ctx=ctx, cfg=cfg)
+            obj.logger = MagicMock()
             await obj.initialize()
+            obj.logger.info.assert_called_once_with('Listening on %s:%d', cfg_data['host'], cfg_data['port'])
 
         mockAppRunner.assert_called_once_with(obj.app)
         mockAppRunner.return_value.setup.assert_called_once_with()

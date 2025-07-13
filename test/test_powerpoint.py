@@ -79,6 +79,7 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         cfg = powerpoint.PowerPointCapture.config({})
         obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+        obj.logger = MagicMock()
 
         win = MagicMock()
         api_slide = MagicMock()
@@ -116,6 +117,9 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
         await obj._loop_once()
         MockDispatch.assert_called_once_with('PowerPoint.Application')
 
+        obj.logger.error.assert_not_called()
+        obj.logger.warning.assert_not_called()
+
     @patch('win32com.client.Dispatch', autospec=True)
     async def test_multi_windows(self, MockDispatch):
         ctx = MagicMock()
@@ -125,6 +129,7 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         cfg = powerpoint.PowerPointCapture.config({})
         obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+        obj.logger = MagicMock()
 
         win1 = MagicMock()
         api_slide = MagicMock()
@@ -175,6 +180,9 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
         slide = obj.emit.call_args[0][0]
         self.assertEqual(str(slide), 'win2-shape modified')
 
+        obj.logger.error.assert_not_called()
+        obj.logger.warning.assert_not_called()
+
     @patch('win32com.client.Dispatch', autospec=True)
     async def test_dispatch_failure(self, MockDispatch):
         ctx = MagicMock()
@@ -184,11 +192,15 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         cfg = powerpoint.PowerPointCapture.config({})
         obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+        obj.logger = MagicMock()
 
         obj.emit = AsyncMock()
 
         await obj._loop_once()
 
+        self.assertIn('Failed to dispatch PowerPoint.', obj.logger.error.call_args[0][0])
+        obj.logger.error.assert_called_once()
+        obj.logger.warning.assert_not_called()
         self._assert_empty_slide(obj.emit)
 
     @patch('win32com.client.Dispatch', autospec=True)
@@ -200,6 +212,7 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         cfg = powerpoint.PowerPointCapture.config({})
         obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+        obj.logger = MagicMock()
 
         def _raise_error(*args, **kwargs):
             raise mock_pywintypes.com_error
@@ -211,6 +224,9 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         self._assert_empty_slide(obj.emit)
 
+        obj.logger.error.assert_not_called()
+        obj.logger.warning.assert_not_called()
+
     @patch('win32com.client.Dispatch', autospec=True)
     async def test_ppt_windows_count_0(self, MockDispatch):
         ctx = MagicMock()
@@ -220,6 +236,7 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         cfg = powerpoint.PowerPointCapture.config({})
         obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+        obj.logger = MagicMock()
 
         ppt.SlideShowWindows.Count = 0
 
@@ -227,6 +244,8 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         await obj._loop_once()
 
+        self.assertIn('No current presentation window.', obj.logger.warning.call_args[0][0])
+        obj.logger.error.assert_not_called()
         self._assert_empty_slide(obj.emit)
 
     def _assert_empty_slide(self, mock_emit):
@@ -244,6 +263,7 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         cfg = powerpoint.PowerPointCapture.config({})
         obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+        obj.logger = MagicMock()
 
         win = MagicMock()
         ppt.SlideShowWindows.Count = 1
@@ -253,6 +273,8 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         int_slide = obj._get_slide()
 
+        obj.logger.error.assert_not_called()
+        obj.logger.warning.assert_not_called()
         self.assertEqual(int_slide, None)
 
     @patch('win32com.client.Dispatch', autospec=True)
@@ -264,6 +286,7 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         cfg = powerpoint.PowerPointCapture.config({})
         obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+        obj.logger = MagicMock()
         ctx.get_instance.return_value = obj
 
         obj_jmespath = jmespath_filter.JMESPathFilter(
@@ -299,6 +322,8 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(d['shapes'][0]['text_frame']['has_text'], True)
         self.assertEqual(d['shapes'][0]['text_frame']['text_range']['text'], 'a')
 
+        obj.logger.error.assert_not_called()
+        obj.logger.warning.assert_not_called()
 
     def test_accumulate_powerpoint(self):
         import importlib
