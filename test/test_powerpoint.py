@@ -231,8 +231,8 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
     def _assert_empty_slide(self, mock_emit):
         mock_emit.assert_called_once()
         slide = mock_emit.call_args[0][0]
-        self.assertEqual(slide._slide, None)
-        self.assertEqual(slide._dict, None)
+        self.assertEqual(slide.to_texts(), [])
+        self.assertEqual(slide.to_dict(), {})
 
     @patch('win32com.client.Dispatch', autospec=True)
     def test_blank(self, MockDispatch):
