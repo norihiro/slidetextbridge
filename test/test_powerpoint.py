@@ -12,6 +12,7 @@ sys.modules['win32com.client'] = mock_win32com_client
 sys.modules['pywintypes'] = mock_pywintypes
 
 from slidetextbridge.plugins import powerpoint # pylint: disable=C0413
+from slidetextbridge.plugins import jmespath_filter
 
 def mock_shape(text, shape_type=14, name='unnamed'):
     shape = MagicMock()
@@ -253,6 +254,51 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
         int_slide = obj._get_slide()
 
         self.assertEqual(int_slide, None)
+
+    @patch('win32com.client.Dispatch', autospec=True)
+    async def test_jmespath(self, MockDispatch):
+        ctx = MagicMock()
+
+        ppt = MagicMock()
+        MockDispatch.return_value = ppt
+
+        cfg = powerpoint.PowerPointCapture.config({})
+        obj = powerpoint.PowerPointCapture(ctx=ctx, cfg=cfg)
+        ctx.get_instance.return_value = obj
+
+        obj_jmespath = jmespath_filter.JMESPathFilter(
+                ctx=ctx,
+                cfg=jmespath_filter.JMESPathFilter.config({
+                    'filter': 'shapes[?text_frame.text_range.font.size>=`28`]'
+                }),
+        )
+
+        win = MagicMock()
+        api_slide = MagicMock()
+        ppt.SlideShowWindows.Count = 1
+        ppt.SlideShowWindows.return_value = win
+        win.View = MagicMock()
+        win.View.State = 0
+        win.View.Slide = api_slide
+
+        api_slide.Shapes = [
+                mock_shape(text='a'),
+                mock_shape(text='b'),
+        ]
+        api_slide.Shapes[0].TextFrame.TextRange.Font.Size = 28
+        api_slide.Shapes[1].TextFrame.TextRange.Font.Size = 13
+
+        obj_jmespath.emit = AsyncMock()
+
+        await obj._loop_once()
+
+        slide = obj_jmespath.emit.call_args[0][0]
+        self.assertEqual(str(slide), 'a')
+        # self.maxDiff = None
+        d = slide.to_dict()
+        self.assertEqual(d['shapes'][0]['text_frame']['has_text'], True)
+        self.assertEqual(d['shapes'][0]['text_frame']['text_range']['text'], 'a')
+
 
     def test_accumulate_powerpoint(self):
         import importlib
