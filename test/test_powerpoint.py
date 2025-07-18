@@ -92,6 +92,7 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
         api_slide.Shapes = [
                 mock_shape(text='a'),
                 mock_shape(text='b'),
+                mock_shape(text='line1\nline2'),
         ]
         api_slide.Shapes[1].Type = 13 # Not a placeholder
 
@@ -104,14 +105,15 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
 
         MockDispatch.assert_called_once_with('PowerPoint.Application')
 
-        self.assertEqual(str(slide), 'a')
+        self.assertEqual(str(slide), 'a\nline1\nline2')
         # self.maxDiff = None
         d = slide.to_dict()
         self.assertEqual(d['shapes'][0]['text_frame']['has_text'], True)
         self.assertEqual(d['shapes'][0]['text_frame']['text_range']['text'], 'a')
+        self.assertEqual(d['shapes'][1]['text_frame']['text_range']['text'], 'line1\nline2')
         # TODO: Check other fields. I should copy the expected data from actual PowerPoint.
 
-        self.assertEqual(slide.to_texts(), ['a'])
+        self.assertEqual(slide.to_texts(), ['a', 'line1\nline2'])
 
         # Call again, Dispatch should not be called again.
         await obj._loop_once()
