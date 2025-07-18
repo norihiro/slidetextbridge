@@ -140,7 +140,7 @@ def _tr_to_dict(tr):
             tr,
             params=(
                 ('HasText', _com32bool_to_bool),
-                'Text',
+                ('Text', lambda t: t.replace('\r', '\n')),
                 'Count', 'Start', 'Length',
                 'BoundLeft', 'BoundTop', 'BoundWidth', 'BoundHeight',
                 ('Font', _font_to_dict),
@@ -192,7 +192,7 @@ class PowerPointSlide(base.SlideBase):
         for shape in self._slide.Shapes:
             if not self._shape_is_valid(shape):
                 continue
-            texts.append(shape.TextFrame.TextRange.Text.replace('\r', ' '))
+            texts.append(shape.TextFrame.TextRange.Text.replace('\r', '\n'))
         return texts
 
     def to_dict(self):
