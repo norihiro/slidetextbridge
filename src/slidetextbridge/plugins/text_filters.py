@@ -222,7 +222,7 @@ class RegexFilter(base.PluginBase):
         shapes = [{
             'text': self._filter_shape_text(t),
             } for t in texts]
-        slide = TextFilteredSlide(data={'shapes': shapes}, parent=self)
+        slide = base.SlideBase(data={'shapes': shapes}, parent=self)
         await self.emit(slide)
 
 
@@ -231,28 +231,14 @@ class TextFilteredSlide(base.SlideBase):
 
     def __init__(self, data=None, parent=None):
         if isinstance(data, list):
-            self._dict = {'shapes': data}
-        else:
-            self._dict = data
-        self.parent = parent
-
-    def to_texts(self):
-        try:
-            if self._dict:
-                return [shape['text'] for shape in self._dict['shapes']]
-        except (TypeError, KeyError) as e:
-            logger = self.parent.logger if self.parent else logging.getLogger('TextFilteredSlide')
-            logger.error('Failed to convert slide to texts. %s', e)
-        return []
+            data = {'shapes': data}
+        super().__init__(data=data, parent=parent)
 
     def __str__(self):
         ret = ''
         shape_delimiter = ''
-        for shape in self._dict['shapes']:
+        for shape in self.to_dict()['shapes']:
             ret += shape_delimiter
             ret += shape['text']
             shape_delimiter = shape['shape_delimiter'] if 'shape_delimiter' in shape else '\n'
         return ret
-
-    def to_dict(self):
-        return self._dict

@@ -64,7 +64,7 @@ class ImpressCapture(base.PluginBase):
 
         if slide != self._last_slide:
             self._last_slide = slide
-            await self.emit(ImpressSlide(slide))
+            await self.emit(base.SlideBase(data=_dict_from_slide(slide), parent=self))
 
         await asyncio.sleep(self.cfg.poll_wait_time)
         return True
@@ -98,37 +98,10 @@ class ImpressCapture(base.PluginBase):
         return controller.getCurrentSlide()
 
 
-class ImpressSlide(base.SlideBase):
-    'The slide class returned by ImpressCapture'
-
-    def __init__(self, slide=None, data=None):
-        self._slide = slide
-        if isinstance(data, list):
-            self._dict = {'shapes': data}
-        else:
-            self._dict = data
-
-    def to_texts(self):
-        '''
-        List all texts
-        :return:  List of strings
-        '''
-        if self._dict:
-            return _list_texts(self._dict)
-        if self._slide:
-            texts = []
-            for shape in self._slide:
-                texts.append(shape.Text.getString())
-            return texts
-        return []
-
-    def to_dict(self):
-        if self._dict:
-            return self._dict
-        if not self._slide:
-            return {}
-        shapes = []
-        for shape in self._slide:
+def _dict_from_slide(slide):
+    shapes = []
+    if slide:
+        for shape in slide:
             s = base.SlideBase.convert_object(shape, params=(
                 ('Text', lambda v: v.getString()),
                 'CharColor',
@@ -137,22 +110,4 @@ class ImpressSlide(base.SlideBase):
             ))
             s['text'] = shape.Text.getString()
             shapes.append(s)
-        self._dict = {'shapes': shapes}
-        return self._dict
-
-
-def _list_texts(obj):
-    if isinstance(obj, str):
-        return [obj, ]
-    if isinstance(obj, (int, float, bool)):
-        return []
-    if isinstance(obj, dict):
-        for key in ('shapes', 'text'):
-            if key in obj:
-                return _list_texts(obj[key])
-        return []
-    ret = []
-    for x in obj:
-        if x:
-            ret += _list_texts(x)
-    return ret
+    return {'shapes': shapes}
