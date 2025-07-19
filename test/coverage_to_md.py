@@ -8,6 +8,8 @@ _HEADER_KEY_PAIRS = (
         ('File', None),
         ('Stmts', 'num_statements'),
         ('Miss', 'missing_lines'),
+        ('Branch', 'num_branches'),
+        ('BrPart', 'num_partial_branches'),
         ('Cover', 'percent_covered', '{:.0f}%'),
 )
 

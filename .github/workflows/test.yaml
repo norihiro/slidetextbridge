@@ -30,7 +30,7 @@ jobs:
 
       - name: Run unit test
         run: |
-          python -m coverage run -m unittest discover -s test -v
+          python -m coverage run --branch -m unittest discover -s test -v
 
       - name: Report coverage
         run: |
@@ -38,7 +38,7 @@ jobs:
             --omit='/usr/*,test/*'
           )
           python -m coverage report "${report_args[@]}"
-          python -m coverage html
+          python -m coverage html "${report_args[@]}"
           python -m coverage json "${report_args[@]}"
           zip -r htmlcov-$(git describe --always)-${{ matrix.python-version }}.zip htmlcov coverage.json
           echo '## Coverage summary' >> $GITHUB_STEP_SUMMARY
