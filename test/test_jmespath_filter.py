@@ -34,8 +34,8 @@ class TestJMESPathFilter(unittest.IsolatedAsyncioTestCase):
 
         filter_obj.emit.assert_awaited_once()
         emitted_slide = filter_obj.emit.await_args[0][0]
-        self.assertIsInstance(emitted_slide, TextFilteredSlide)
-        self.assertEqual(emitted_slide.to_dict(), {'shapes': [{'text': 'b', 'val': 2}]})
+        self.assertIsInstance(emitted_slide, base.SlideBase)
+        self.assertEqual(emitted_slide.to_dict(), {'shapes': [{'text': 'b', 'val': 2}], 'text_paths': ['shapes', 'text']})
         self.assertEqual(emitted_slide.to_texts(), ['b', ])
 
         # If nothing is filtered,
@@ -43,7 +43,7 @@ class TestJMESPathFilter(unittest.IsolatedAsyncioTestCase):
         await filter_obj.update(slide, args=None)
         emitted_slide = filter_obj.emit.await_args[0][0]
         self.assertEqual(emitted_slide.to_texts(), [])
-        self.assertEqual(emitted_slide.to_dict(), {'shapes': []})
+        self.assertEqual(emitted_slide.to_dict(), {'shapes': [], 'text_paths': ['shapes', 'text']})
 
         # TextFilteredSlide ignores shapes that does not contain the `text` field.
         slide = TextFilteredSlide(data={'shapes': [{'test': 'a', 'val': 1}, {'test': 'b', 'val': 2}]})
@@ -51,15 +51,15 @@ class TestJMESPathFilter(unittest.IsolatedAsyncioTestCase):
         emitted_slide = filter_obj.emit.await_args[0][0]
         self.assertEqual(emitted_slide.to_texts(), [])
 
-        # TextFilteredSlide ignores shapes list directly having string.
+        # Also return shapes list directly having string.
         slide = TextFilteredSlide(data={'shapes': [{'text': 'c', 'val': 1}, {'text': 'd', 'val': 2}]})
         cfg.filter = 'shapes[?val==`2`].text'
         filter_obj = JMESPathFilter(ctx=ctx, cfg=cfg)
         filter_obj.emit = AsyncMock()
         await filter_obj.update(slide, args=None)
         emitted_slide = filter_obj.emit.await_args[0][0]
-        self.assertEqual(emitted_slide.to_dict(), {'shapes': ['d']})
-        self.assertEqual(emitted_slide.to_texts(), [])
+        self.assertEqual(emitted_slide.to_dict(), {'shapes': ['d'], 'text_paths': ['shapes', 'text']})
+        self.assertEqual(emitted_slide.to_texts(), ['d'])
 
 if __name__ == '__main__':
     unittest.main()

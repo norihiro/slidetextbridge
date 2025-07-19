@@ -59,7 +59,7 @@ class PowerPointCapture(base.PluginBase):
         slide = self._get_slide()
         if slide != self._last_slide:
             self._last_slide = slide
-            await self.emit(PowerPointSlide(slide, cfg=self.cfg))
+            await self.emit(PowerPointSlide(slide, cfg=self.cfg, parent=self))
 
         await asyncio.sleep(self.cfg.poll_wait_time)
 
@@ -158,16 +158,16 @@ def _tf_to_dict(tf):
 def _pf_to_dict(pf):
     return base.SlideBase.convert_object(pf, params=('Name', 'Type', 'ContainedType'))
 
+_TEXT_PATHS = ('shapes', 'text', 'text_range', 'text_frame')
+
 class PowerPointSlide(base.SlideBase):
     'The slide class returned by PowerPointCapture'
 
-    def __init__(self, slide=None, data=None, cfg=None):
+    def __init__(self, slide, cfg, parent):
+        super().__init__(parent=parent)
         self._slide = slide
+        self._ppt_dict = None
         self.cfg = cfg
-        if isinstance(data, list):
-            self._dict = {'shapes': data}
-        else:
-            self._dict = data
 
     def _shape_is_valid(self, shape):
         if not shape.HasTextFrame or not shape.TextFrame.HasText:
@@ -182,8 +182,8 @@ class PowerPointSlide(base.SlideBase):
         List all texts
         :return:  List of strings
         '''
-        if self._dict:
-            return _list_texts(self._dict)
+        if self._ppt_dict:
+            return super().to_texts()
 
         if not self._slide:
             return []
@@ -196,8 +196,8 @@ class PowerPointSlide(base.SlideBase):
         return texts
 
     def to_dict(self):
-        if self._dict:
-            return self._dict
+        if self._ppt_dict:
+            return self._ppt_dict
         if not self._slide:
             return {}
         shapes = []
@@ -211,22 +211,9 @@ class PowerPointSlide(base.SlideBase):
                 'Name',
             ))
             shapes.append(s)
-        self._dict = {'shapes': shapes}
-        return self._dict
-
-
-def _list_texts(obj):
-    if isinstance(obj, str):
-        return [obj, ]
-    if isinstance(obj, (int, float, bool)):
-        return []
-    if isinstance(obj, dict):
-        for key in ('shapes', 'text', 'text_range', 'text_frame'):
-            if key in obj:
-                return _list_texts(obj[key])
-        return []
-    ret = []
-    for x in obj:
-        if x:
-            ret += _list_texts(x)
-    return ret
+        self._ppt_dict = {
+                'shapes': shapes,
+                'text_paths': _TEXT_PATHS,
+        }
+        self.set_data(self._ppt_dict)
+        return self._ppt_dict
