@@ -60,7 +60,7 @@ class TestImpressCapture(unittest.IsolatedAsyncioTestCase):
             await obj._loop_once()
 
             slide = obj.emit.call_args[0][0]
-            self.assertEqual(slide._slide, uno_slide)
+            self.assertEqual(slide.to_dict(), impress.ImpressSlide._dict_from_slide(uno_slide))
             self.assertEqual(slide.to_texts(), ['text1', 'text2'])
 
             mock_sleep.assert_called_once()

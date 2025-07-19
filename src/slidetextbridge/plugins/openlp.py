@@ -120,7 +120,7 @@ class OpenLPCapture(base.PluginBase):
 
     async def _loop_once(self):
         obj = await self._wait_and_get_text()
-        slide = OpenLPSlide(data = {'shapes': [obj] if obj else []}, parent=self)
+        slide = base.SlideBase(data = {'shapes': [obj] if obj else []}, parent=self)
         await self.emit(slide)
 
     async def initialize(self):
@@ -135,26 +135,3 @@ class OpenLPCapture(base.PluginBase):
                 await asyncio.sleep(3)
             if not self._conn_ws:
                 await asyncio.sleep(3)
-
-
-class OpenLPSlide(base.SlideBase):
-    'The slide class returned by OpenLPCapture'
-
-    def __init__(self, data=None, parent=None):
-        if isinstance(data, list):
-            self._dict = {'shapes': data}
-        else:
-            self._dict = data
-        self.parent = parent
-
-    def to_texts(self):
-        try:
-            if self._dict:
-                return [shape['text'] for shape in self._dict['shapes']]
-        except (TypeError, KeyError) as e:
-            logger = self.parent.logger if self.parent else logging.getLogger('OpenLPSlide')
-            logger.error('Failed to convert slide to texts. %s', e)
-        return []
-
-    def to_dict(self):
-        return self._dict
