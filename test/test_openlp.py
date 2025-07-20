@@ -30,6 +30,42 @@ class TestOpenLPCapture(unittest.IsolatedAsyncioTestCase):
     def test_type_name(self):
         self.assertEqual(openlp.OpenLPCapture.type_name(), 'openlp')
 
+    def test_config_default(self):
+        cfg = openlp.OpenLPCapture.config({})
+        obj = openlp.OpenLPCapture(ctx=MagicMock, cfg=cfg)
+        cfg = obj.cfg
+        self.assertEqual(cfg.host, 'localhost')
+        self.assertEqual(cfg.port, 4316)
+        self.assertEqual(cfg.port_ws, 4317)
+
+    def test_config_host_port(self):
+        host = 'example.net'
+        port = 12345
+        cfg = openlp.OpenLPCapture.config({
+            'host': host,
+            'port': port,
+        })
+        obj = openlp.OpenLPCapture(ctx=MagicMock, cfg=cfg)
+        cfg = obj.cfg
+        self.assertEqual(cfg.host, host)
+        self.assertEqual(cfg.port, port)
+        self.assertEqual(cfg.port_ws, port + 1)
+
+    def test_config_host_port_ws(self):
+        host = 'example.net'
+        port = 12345
+        port_ws = 15678
+        cfg = openlp.OpenLPCapture.config({
+            'host': host,
+            'port': port,
+            'port_ws': port_ws,
+        })
+        obj = openlp.OpenLPCapture(ctx=MagicMock, cfg=cfg)
+        cfg = obj.cfg
+        self.assertEqual(cfg.host, host)
+        self.assertEqual(cfg.port, port)
+        self.assertEqual(cfg.port_ws, port_ws)
+
     async def test_loop(self):
         ctx = MagicMock()
         cfg = openlp.OpenLPCapture.config({})
