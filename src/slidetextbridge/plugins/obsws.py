@@ -2,6 +2,7 @@
 Send text to OBS Studio
 '''
 
+import asyncio
 import logging
 import simpleobsws
 from slidetextbridge.core import config
@@ -29,6 +30,8 @@ class ObsWsEmitter(base.PluginBase):
     def __init__(self, ctx, cfg=None):
         super().__init__(ctx=ctx, cfg=cfg)
         self.logger = logging.getLogger(f'obsws({self.cfg.location})')
+        self._pending_text = None
+        self._sending_task = None
         self.ws = None
         self.connect_to(cfg.src)
 
@@ -48,16 +51,34 @@ class ObsWsEmitter(base.PluginBase):
         else:
             text = str(slide)
 
-        try:
-            await self._send_request('SetInputSettings', {
-                'inputName': self.cfg.source_name,
-                'inputSettings': {'text': text}
-            })
-        except Exception as e:
-            self.logger.warning('Could not send text. %s', e)
-            return
+        self._send_text(text)
 
-    async def _send_request(self, req, data, retry=2):
+    def _send_text(self, text):
+        self._pending_text = text
+        if not self._sending_task:
+            self._sending_task = asyncio.create_task(self._send_text_routine())
+
+    async def _send_text_routine(self):
+        self.logger.debug('Starting text sending routine...')
+        sent_text = object()
+        while self._pending_text != sent_text:
+            text = self._pending_text
+
+            try:
+                self.logger.debug('Attempting to send "%s"...', text)
+                await self._send_request(simpleobsws.Request('SetInputSettings', {
+                    'inputName': self.cfg.source_name,
+                    'inputSettings': {'text': text}
+                }))
+                sent_text = text
+            except Exception as e:
+                self.logger.warning('Could not send text. %s', e)
+                break
+
+        self._sending_task = None
+        self.logger.debug('Ending text sending routine. The text was "%s"', text)
+
+    async def _send_request(self, req, retry=2):
         while retry > 0:
             retry -= 1
 
@@ -73,7 +94,7 @@ class ObsWsEmitter(base.PluginBase):
                 continue
 
             try:
-                res = await self.ws.call(simpleobsws.Request(req, data))
+                res = await self.ws.call(req)
                 if res.ok():
                     return res.responseData
                 self.logger.warning('%s: %d: %s', res.requestType,

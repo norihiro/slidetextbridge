@@ -45,6 +45,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         ctx.get_instance.assert_called_once_with(name=cfg_src)
 
         await obj.update('test text', args=None)
+        await asyncio.gather(obj._sending_task, return_exceptions=True)
 
         MockWebSocketClient.assert_called_with(url=cfg_url, password=cfg_password)
         mock_ws.connect.assert_awaited_once()
@@ -57,6 +58,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         ))
 
         await obj.update('2nd text', args=None)
+        await asyncio.gather(obj._sending_task, return_exceptions=True)
 
         mock_ws.connect.assert_awaited_once()
         mock_ws.call.assert_awaited_with(obsws.simpleobsws.Request(
@@ -88,6 +90,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update(None, args=None)
+        await asyncio.gather(obj._sending_task, return_exceptions=True)
 
         MockWebSocketClient.assert_called_with(url=cfg_url, password=None)
         mock_ws.wait_until_identified.assert_not_called()
@@ -126,6 +129,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update('', args=None)
+        await asyncio.gather(obj._sending_task, return_exceptions=True)
 
         MockWebSocketClient.assert_called_with(url=cfg_url, password=None)
         mock_ws.wait_until_identified.assert_awaited()
@@ -172,6 +176,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update('test text', args=None)
+        await asyncio.gather(obj._sending_task, return_exceptions=True)
 
         MockWebSocketClient.assert_called_with(url='ws://localhost:4455/', password=None)
         mock_ws.connect.assert_awaited()
@@ -213,6 +218,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update(base.SlideBase(), args=None)
+        await asyncio.gather(obj._sending_task, return_exceptions=True)
 
         MockWebSocketClient.assert_called_with(url='ws://localhost:4455/', password=None)
         mock_ws.connect.assert_awaited()
@@ -256,6 +262,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         ctx.get_instance.assert_called_once_with(name=None)
 
         await obj.update(base.SlideBase(), args=None)
+        await asyncio.gather(obj._sending_task, return_exceptions=True)
 
         MockWebSocketClient.assert_called_with(url='ws://localhost:4455/', password=None)
         mock_ws.connect.assert_awaited()
@@ -308,6 +315,7 @@ class TestObsWsEmitter(unittest.IsolatedAsyncioTestCase):
         obj.logger.warning = MagicMock()
 
         await obj.update('test text', args=None)
+        await asyncio.gather(obj._sending_task, return_exceptions=True)
 
         MockWebSocketClient.assert_called_with(url=cfg_url, password=cfg_password)
         mock_ws.connect.assert_awaited()
