@@ -2,6 +2,9 @@ name: Pylint
 
 on:
   push:
+    paths-ignore:
+      - '**.md'
+      - 'doc/**'
 
 jobs:
   lint:
