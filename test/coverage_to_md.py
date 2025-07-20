@@ -13,9 +13,6 @@ _HEADER_KEY_PAIRS = (
         ('Cover', 'percent_covered', '{:.0f}%'),
 )
 
-def _list_to_row(v):
-    return '| ' + ' | '.join(v) + ' |'
-
 def _value(p, summary, file):
     v = summary[p[1]] if p[1] else file
     if len(p) == 2:
@@ -24,23 +21,33 @@ def _value(p, summary, file):
         return p[2].format(v)
     raise ValueError(f'Unsupported size of p = {p}')
 
+def _pad_cell(t, w):
+    if t == '---':
+        return '-' * w
+    if t.removesuffix('%').replace('.', '').isdigit():
+        return f'{t:>{w}}'
+    return f'{t:<{w}}'
+
 def create_md_table(data) -> str:
     '''
     Convert the data to table in markdown
     :param data: data read from coverage.json
     :return: table in markdown
     '''
-    lines = [
-            _list_to_row([p[0] for p in _HEADER_KEY_PAIRS]),
-            _list_to_row(['-----' for p in _HEADER_KEY_PAIRS]),
+    table = [
+            [p[0] for p in _HEADER_KEY_PAIRS],
+            ['---' for _ in _HEADER_KEY_PAIRS],
     ]
-
     for file, stats in data["files"].items():
         summary = stats['summary']
-        lines.append(_list_to_row([_value(p, summary, f'`{file}`') for p in _HEADER_KEY_PAIRS]))
+        table.append([_value(p, summary, f'`{file}`') for p in _HEADER_KEY_PAIRS])
 
     totals = data['totals']
-    lines.append(_list_to_row([_value(p, totals, '*Total*') for p in _HEADER_KEY_PAIRS]))
+    table.append([_value(p, totals, '*Total*') for p in _HEADER_KEY_PAIRS])
+
+    widths = [max(len(v) for v in x) for x in zip(*table)]
+
+    lines = ['| ' + ' | '.join(_pad_cell(v, widths[i]) for i, v in enumerate(line)) + ' |' for line in table]
 
     return '\n'.join(lines)
 
