@@ -83,7 +83,8 @@ class PowerPointCapture(base.PluginBase):
             if not self.ppt:
                 return None
         try:
-            slide_count = self.ppt.SlideShowWindows.Count
+            ww = self.ppt.SlideShowWindows
+            slide_count = ww.Count
         except (pywintypes.com_error, AttributeError): # pylint: disable=no-member
             self.ppt = None
             self._last_window = None
@@ -94,12 +95,12 @@ class PowerPointCapture(base.PluginBase):
             return None
 
         if slide_count == 1:
-            self._last_window = self.ppt.SlideShowWindows(1)
+            self._last_window = ww(1)
             return self._last_window
 
         cand = None
         for ix in range(slide_count):
-            w = self.ppt.SlideShowWindows(ix + 1)
+            w = ww(ix + 1)
             if w.Active:
                 self._last_window = w
                 return w
