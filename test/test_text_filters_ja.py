@@ -95,6 +95,86 @@ class TestTextFiltersJa(unittest.IsolatedAsyncioTestCase):
             'Χριστοῦ である。'
             ))])
 
+class TestNormalizeFilter(unittest.IsolatedAsyncioTestCase):
+
+    def test_type_name(self):
+        self.assertEqual(text_filters.NormalizeFilter.type_name(), 'normalize')
+
+    def test_form(self):
+        for form in ('NFC', 'NFKC', 'NFD', 'NFKD', None):
+            cfg = text_filters.NormalizeFilter.config(
+                    {'form': form} if form else {}
+            )
+            self.assertEqual(cfg.form, form or 'NFKC')
+
+    def test_form_invalid(self):
+        with self.assertRaises(ValueError):
+            text_filters.NormalizeFilter.config({'form': 'INVALID'})
+
+    async def test_normalize_filter_NFKC(self):
+        res = await run_filter(
+                text_filters.NormalizeFilter,
+                {},
+                make_slide([
+                    'はは\u3099は\u309aばぱ',
+                    '０１２３４５６７８９',
+                    'ＡＢＣＤ',
+                    ])
+        )
+        self.assertEqual(res.to_texts(), [
+            'はばぱばぱ',
+            '0123456789',
+            'ABCD',
+            ])
+
+    async def test_normalize_filter_NKC(self):
+        res = await run_filter(
+                text_filters.NormalizeFilter,
+                {'form': 'NFC'},
+                make_slide([
+                    'はは\u3099は\u309aばぱ',
+                    '０１２３４５６７８９',
+                    'ＡＢＣＤ',
+                    ])
+        )
+        self.assertEqual(res.to_texts(), [
+            'はばぱばぱ',
+            '０１２３４５６７８９',
+            'ＡＢＣＤ',
+            ])
+
+    async def test_normalize_filter_NFKD(self):
+        res = await run_filter(
+                text_filters.NormalizeFilter,
+                {'form': 'NFKD'},
+                make_slide([
+                    'はは\u3099は\u309aばぱ',
+                    '０１２３４５６７８９',
+                    'ＡＢＣＤ',
+                    ])
+        )
+        self.assertEqual(res.to_texts(), [
+            'はは\u3099は\u309aは\u3099は\u309a',
+            '0123456789',
+            'ABCD',
+            ])
+
+    async def test_normalize_filter_NKD(self):
+        res = await run_filter(
+                text_filters.NormalizeFilter,
+                {'form': 'NFD'},
+                make_slide([
+                    'はは\u3099は\u309aばぱ',
+                    '０１２３４５６７８９',
+                    'ＡＢＣＤ',
+                    ])
+        )
+        self.assertEqual(res.to_texts(), [
+            'はは\u3099は\u309aは\u3099は\u309a',
+            '０１２３４５６７８９',
+            'ＡＢＣＤ',
+            ])
+
 
 if __name__ == '__main__':
     unittest.main()

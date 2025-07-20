@@ -17,6 +17,7 @@ Step Types
    jmespath
    linebreak
    regex
+   normalize
    stdout
 
 .. toctree::
