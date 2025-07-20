@@ -9,6 +9,7 @@ Step Types
    ppt
    impress
    openlp
+   stdin
 
 .. toctree::
    :caption: Filters
