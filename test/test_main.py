@@ -1,11 +1,12 @@
 import sys
 import tempfile
 import unittest
+import logging
 from unittest.mock import MagicMock, patch
 
 from slidetextbridge.core import main
 
-@unittest.skipUnless(sys.version_info >= (3, 12), 'Requires Python >= 3.12')
+@unittest.skipUnless(sys.version_info >= (3, 12), 'delete_on_close requires Python >= 3.12')
 class TestMainFailure(unittest.TestCase):
 
     @patch('logging.getLogger')
@@ -120,6 +121,22 @@ class TestMainFailure(unittest.TestCase):
             self.assertIn('Cannot connect to the source.', mock_error.call_args_list[0][0][0])
             self.assertIn('test-invalid-name', str(mock_error.call_args_list[0][0][1]))
             self.assertIn('Failed to start', str(mock_error.call_args_list[1][0][0]))
+
+class TestMainLogLevels(unittest.TestCase):
+    @patch('logging.getLogger')
+    def test_args_verbose(self, mock_logger):
+        levels = (
+                ([], logging.INFO),
+                (['-v'], logging.DEBUG),
+                (['-q'], logging.WARNING),
+                (['-qq'], logging.ERROR),
+                (['-qqq'], logging.CRITICAL),
+        )
+        for log_args, exp_level in levels:
+            with (patch('logging.basicConfig') as basicConfig, patch('sys.argv', ['test'] + log_args)):
+                basicConfig.side_effect = StopIteration('test: stop the code here')
+                main.main()
+                basicConfig.assert_called_once_with(level=exp_level)
 
 if __name__ == '__main__':
     unittest.main()
