@@ -4,6 +4,7 @@ Filters to modify texts
 
 import re
 import logging
+import unicodedata
 from slidetextbridge.core import config
 from . import base
 
@@ -222,6 +223,47 @@ class RegexFilter(base.PluginBase):
         shapes = [{
             'text': self._filter_shape_text(t),
             } for t in texts]
+        slide = base.SlideBase(data={'shapes': shapes}, parent=self)
+        await self.emit(slide)
+
+
+class NormalizeFilter(base.PluginBase):
+    '''
+    Normalize unicode text
+    '''
+
+    @staticmethod
+    def type_name():
+        return 'normalize'
+
+    @staticmethod
+    def config(data):
+        cfg = config.ConfigBase()
+        base.set_config_arguments(cfg)
+        cfg.add_argment('form', type=str, default='NFKC')
+        cfg.parse(data)
+
+        form = cfg.form # type: ignore[attr-defined] # pylint: disable=E1101
+        form_choice = ('NFC', 'NFKC', 'NFD', 'NFKD')
+        if form not in form_choice:
+            raise ValueError(f'Unknown form "{form}". '
+                             f'Available choices are {" ".join(form_choice)}.')
+
+        return cfg
+
+    def __init__(self, ctx, cfg=None):
+        super().__init__(ctx=ctx, cfg=cfg)
+        self.logger = logging.getLogger(f'regex({self.cfg.location})')
+        self.logger.debug('Unicode database %s', unicodedata.unidata_version)
+        self.connect_to(cfg.src)
+
+    def _filter_shape_text(self, text):
+        return unicodedata.normalize(self.cfg.form, text)
+
+    async def update(self, slide, args):
+        shapes = [{
+            'text': self._filter_shape_text(t),
+            } for t in slide.to_texts()]
         slide = base.SlideBase(data={'shapes': shapes}, parent=self)
         await self.emit(slide)
 
