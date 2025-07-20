@@ -1,0 +1,7 @@
+steps:
+  - type: stdin
+
+  - type: normalize
+
+  - type: stdout
+    page_delimiter: "\n"
