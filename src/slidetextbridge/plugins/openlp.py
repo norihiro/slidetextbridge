@@ -28,11 +28,31 @@ def _filter_by_types(slide, item):
         return slide
     return None
 
+class OpenLPCaptureConfig(config.ConfigBase):
+    'Configuration for OpenLPCapture'
+    host: str
+    port: int
+    port_ws:int
+    def __init__(self):
+        super().__init__()
+        base.set_config_arguments(self, has_src=False)
+        self.add_argment('host', type=str, default='localhost')
+        self.add_argment('port', type=int, default=4316)
+        self.add_argment('port_ws', type=int, default=None)
+
+    def parse(self, d):
+        super().parse(d)
+        if not self.port_ws:
+            self.port_ws = self.port + 1
+
 
 class OpenLPCapture(base.PluginBase):
     '''
     Get text from OpenLP
     '''
+
+    cfg: OpenLPCaptureConfig
+
     @staticmethod
     def type_name():
         return 'openlp'
@@ -40,11 +60,7 @@ class OpenLPCapture(base.PluginBase):
     @staticmethod
     def config(data):
         'Return the config object'
-        cfg = config.ConfigBase()
-        base.set_config_arguments(cfg, has_src=False)
-        cfg.add_argment('host', type=str, default='localhost')
-        cfg.add_argment('port', type=int, default=4316)
-        cfg.add_argment('port_ws', type=int, default=None)
+        cfg = OpenLPCaptureConfig()
         cfg.parse(data)
         return cfg
 
@@ -55,10 +71,7 @@ class OpenLPCapture(base.PluginBase):
 
         self._conn = None
         self._conn_ws = None
-        self._port_ws = None
         self._cache = {}
-        if not self.cfg.port_ws:
-            self.cfg.port_ws = self.cfg.port + 1
 
     async def _connect(self):
         if not self._conn:
