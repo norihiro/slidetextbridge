@@ -1,6 +1,6 @@
 #! /bin/bash
 
-bash -e
+set -e
 
 exe=${EXE:-slidetextbridge}
 
