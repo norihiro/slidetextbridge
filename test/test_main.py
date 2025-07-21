@@ -98,5 +98,28 @@ class TestMainFailure(unittest.TestCase):
             self.assertIn('Failed to start', mock_error.call_args_list[0][0][0])
             self.assertIn('is undefined', str(mock_error.call_args_list[0][0][1]))
 
+    @patch('logging.getLogger')
+    def test_wrong_src(self, mock_logger):
+        with tempfile.NamedTemporaryFile(mode='w', delete_on_close=False) as fc:
+            fc.write('''
+            steps:
+              - type: openlp
+                name: name1
+              - type: stdout
+                src: test-invalid-name
+             ''')
+            fc.close()
+
+            mock_logger.return_value = MagicMock()
+            mock_error = mock_logger.return_value.error
+
+            with patch('sys.argv', ['test', '-c', fc.name]):
+                ret = main.main()
+
+            self.assertNotEqual(ret, 0)
+            self.assertIn('Cannot connect to the source.', mock_error.call_args_list[0][0][0])
+            self.assertIn('test-invalid-name', str(mock_error.call_args_list[0][0][1]))
+            self.assertIn('Failed to start', str(mock_error.call_args_list[1][0][0]))
+
 if __name__ == '__main__':
     unittest.main()
