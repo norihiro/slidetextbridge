@@ -10,7 +10,7 @@ on:
       - 'test/**'
 
 env:
-  artifactName: ${{ contains(github.ref_name, '/') && 'artifact' || github.ref_name }}
+  tagName: ${{ contains(github.ref_name, '/') && 'artifact' || github.ref_name }}
 
 jobs:
   windows:
@@ -59,8 +59,14 @@ jobs:
           }
           Compress-Archive @compress
 
+      - name: rename
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        run: |
+          Rename-Item -Path 'dist/slidetextbridge.zip' -NewName 'slidetextbridge-${{ env.tagName }}.zip'
+
       - name: upload
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.artifactName }}-windows
-          path: dist/slidetextbridge.zip
+          name: ${{ env.tagName }}-windows
+          path: dist/slidetextbridge*.zip
