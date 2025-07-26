@@ -13,8 +13,24 @@ from slidetextbridge.core import configtop
 def _get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', action='store', default='config.yaml')
+    parser.add_argument('-v', '--verbose', action='count', default=0)
+    parser.add_argument('-q', '--quiet', action='count', default=0)
     parser.add_argument('--strict', action='store_true')
     return parser.parse_args()
+
+def _setup_logging(args):
+    verbose = args.verbose - args.quiet
+    if verbose >= 1:
+        log_level = logging.DEBUG
+    elif verbose >= 0:
+        log_level = logging.INFO
+    elif verbose >= -1:
+        log_level = logging.WARNING
+    elif verbose >= -2:
+        log_level = logging.ERROR
+    else:
+        log_level = logging.CRITICAL
+    logging.basicConfig(level=log_level)
 
 def _setup_ctx(cfgs):
     ctx = Context()
@@ -43,8 +59,8 @@ async def _loop(ctx):
 def main():
     'The entry point'
     try:
-        logging.basicConfig(level=logging.INFO)
         args = _get_args()
+        _setup_logging(args)
         cfgs = configtop.load(args.config)
         ctx = _setup_ctx(cfgs)
     except Exception as e:

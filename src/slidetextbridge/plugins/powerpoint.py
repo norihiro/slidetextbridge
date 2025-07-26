@@ -114,6 +114,9 @@ class PowerPointCapture(base.PluginBase):
             # no current presentation window
             return None
 
+        if self.logger.isEnabledFor(logging.DEBUG):
+            self.logger.debug('Current slideshow "%s"', w.Presentation.Name)
+
         view = w.View
 
         if view.State in (
