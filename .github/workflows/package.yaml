@@ -65,6 +65,9 @@ jobs:
         run: |
           Rename-Item -Path 'dist/slidetextbridge.zip' -NewName 'slidetextbridge-${{ env.tagName }}.zip'
 
+      - run: |
+          dist/slidetextbridge/slidetextbridge.exe -h
+
       - name: upload
         uses: actions/upload-artifact@v4
         with:
