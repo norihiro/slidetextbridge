@@ -27,8 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller pip-licenses
+          pip install pyinstaller
 
       - name: pyinstaller
         shell: pwsh
@@ -42,6 +41,7 @@ jobs:
 
       - name: pip-licenses
         run: |
+          pip install pip-licenses
           pip-licenses.exe --from=mixed --format=plain-vertical --with-license-file --no-license-path --output-file dist/slidetextbridge/LICENSES.txt
 
       - name: datafile
