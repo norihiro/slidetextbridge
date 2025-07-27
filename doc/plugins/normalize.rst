@@ -15,6 +15,7 @@ This step normalizes Unicode text by `unicodedata.normalize`_.
 
 In Japanese,
 there are various kana representations such as half-width and full-width, composition and decomposition for voiced and semi-voiced marks.
+Details of the normalization is listed in the table below.
 
 .. list-table:: Japanese normalization
    :header-rows: 1
