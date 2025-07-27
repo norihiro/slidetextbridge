@@ -44,14 +44,15 @@
 <p><strong>パラメータ:</strong></p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">form</span></code> (str, optional)<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Set the form. Available choices are <code class="docutils literal notranslate"><span class="pre">NFC</span></code>, <code class="docutils literal notranslate"><span class="pre">NFKC</span></code>, <code class="docutils literal notranslate"><span class="pre">NFD</span></code>, and <code class="docutils literal notranslate"><span class="pre">NFKD</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">NFKC</span></code>.</p>
+<dd class="field-odd"><p>形式を設定します。選択肢は <code class="docutils literal notranslate"><span class="pre">NFC</span></code>, <code class="docutils literal notranslate"><span class="pre">NFKC</span></code>, <code class="docutils literal notranslate"><span class="pre">NFD</span></code>, <code class="docutils literal notranslate"><span class="pre">NFKD</span></code> です。デフォルトは <code class="docutils literal notranslate"><span class="pre">NFKC</span></code> です。</p>
 </dd>
 </dl>
-<p><strong>Description:</strong></p>
+<p><strong>説明:</strong></p>
 <p>In Japanese,
-there are various kana representations such as half-width and full-width, composition and decomposition for voiced and semi-voiced marks.</p>
+there are various kana representations such as half-width and full-width, composition and decomposition for voiced and semi-voiced marks.
+Details of the normalization is listed in the table below.</p>
 <table class="docutils align-default" id="id1">
-<caption><span class="caption-text">Japanese normalization</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<caption><span class="caption-text">日本語の正規化</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
 <thead>
 <tr class="row-odd"><th class="head"></th>
 <th class="head"><p><code class="docutils literal notranslate"><span class="pre">NFC</span></code></p></th>
@@ -61,35 +62,35 @@ there are various kana representations such as half-width and full-width, compos
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Full-width voiced and semi-voiced kana</p></td>
-<td><p>Composition</p></td>
-<td><p>Decomposition</p></td>
-<td><p>Composition</p></td>
-<td><p>Decomposition</p></td>
+<tr class="row-even"><td><p>全角濁音符</p></td>
+<td><p>結合</p></td>
+<td><p>分解</p></td>
+<td><p>結合</p></td>
+<td><p>分解</p></td>
 </tr>
-<tr class="row-odd"><td><p>Full-width Kana</p></td>
-<td><p>Full-width</p></td>
-<td><p>Full-width</p></td>
-<td><p>Full-width</p></td>
-<td><p>Full-width</p></td>
+<tr class="row-odd"><td><p>全角かな</p></td>
+<td><p>全角</p></td>
+<td><p>全角</p></td>
+<td><p>全角</p></td>
+<td><p>全角</p></td>
 </tr>
-<tr class="row-even"><td><p>Half-width Katakana</p></td>
-<td><p>Half-width</p></td>
-<td><p>Half-width</p></td>
-<td><p>Full-width</p></td>
-<td><p>Full-width</p></td>
+<tr class="row-even"><td><p>半角カタカナ</p></td>
+<td><p>半角</p></td>
+<td><p>半角</p></td>
+<td><p>全角</p></td>
+<td><p>全角</p></td>
 </tr>
-<tr class="row-odd"><td><p>Half-width digits and latin letters</p></td>
-<td><p>Half-width</p></td>
-<td><p>Half-width</p></td>
-<td><p>Half-width</p></td>
-<td><p>Half-width</p></td>
+<tr class="row-odd"><td><p>半角英数</p></td>
+<td><p>半角</p></td>
+<td><p>半角</p></td>
+<td><p>半角</p></td>
+<td><p>半角</p></td>
 </tr>
-<tr class="row-even"><td><p>Full-width digits and latin letters</p></td>
-<td><p>Full-width</p></td>
-<td><p>Full-width</p></td>
-<td><p>Half-width</p></td>
-<td><p>Half-width</p></td>
+<tr class="row-even"><td><p>全角英数</p></td>
+<td><p>全角</p></td>
+<td><p>全角</p></td>
+<td><p>半角</p></td>
+<td><p>半角</p></td>
 </tr>
 </tbody>
 </table>
