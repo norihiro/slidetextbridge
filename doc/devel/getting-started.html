@@ -37,8 +37,11 @@
   <section id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
 <p>This section covers the basic steps to get <code class="docutils literal notranslate"><span class="pre">slidetextbridge</span></code> running.</p>
-<section id="for-windows-users-recommended">
-<h2>For Windows Users (Recommended)<a class="headerlink" href="#for-windows-users-recommended" title="Link to this heading">¶</a></h2>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<section id="download-a-pre-built-package">
+<h3>Download a pre-built package<a class="headerlink" href="#download-a-pre-built-package" title="Link to this heading">¶</a></h3>
+<p>This is decommended for Windows users.</p>
 <p>If you are on Windows,
 the easiest way to get started is to download the latest ZIP file.</p>
 <ol class="arabic simple">
@@ -48,8 +51,8 @@ the easiest way to get started is to download the latest ZIP file.</p>
 <li><p>That’s it! You can run <code class="docutils literal notranslate"><span class="pre">slidetextbridge.exe</span></code> from this folder.</p></li>
 </ol>
 </section>
-<section id="from-pypi-other-platforms">
-<h2>From PyPI (Other Platforms)<a class="headerlink" href="#from-pypi-other-platforms" title="Link to this heading">¶</a></h2>
+<section id="download-from-pypi-other-platforms">
+<h3>Download from PyPI (Other Platforms)<a class="headerlink" href="#download-from-pypi-other-platforms" title="Link to this heading">¶</a></h3>
 <p>You may install from PyPI.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># It is recommended to use a virtual environment</span>
 <span class="c1"># For Linux, add `--system-site-packages` to use uno module from LibreOffice.</span>
@@ -60,6 +63,7 @@ python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </s
 pip<span class="w"> </span>install<span class="w"> </span>slidetextbridge
 </pre></div>
 </div>
+</section>
 </section>
 <section id="configuration-file">
 <h2>Configuration File<a class="headerlink" href="#configuration-file" title="Link to this heading">¶</a></h2>
@@ -95,7 +99,8 @@ This setup reads text from the placeholder shapes of the current slide in PowerP
 </section>
 <section id="running-the-program">
 <h2>Running the Program<a class="headerlink" href="#running-the-program" title="Link to this heading">¶</a></h2>
-<p><strong>Downloaded from the release page:</strong></p>
+<section id="downloaded-the-pre-built-package">
+<h3>Downloaded the pre-built package<a class="headerlink" href="#downloaded-the-pre-built-package" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>If you have downloaded the ZIP file from the release page,</p>
 <ol class="arabic simple">
@@ -104,7 +109,9 @@ This setup reads text from the placeholder shapes of the current slide in PowerP
 <li><p>That’s it, a console window will appear.</p></li>
 </ol>
 </div></blockquote>
-<p><strong>Downloaded from PyPI:</strong></p>
+</section>
+<section id="downloaded-from-pypi">
+<h3>Downloaded from PyPI<a class="headerlink" href="#downloaded-from-pypi" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><p>If you have installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code>,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>slidetextbridge<span class="w"> </span>-c<span class="w"> </span>config.yaml
@@ -113,6 +120,7 @@ This setup reads text from the placeholder shapes of the current slide in PowerP
 </div></blockquote>
 <p>Now, when you change slides in PowerPoint, the text from the new slide’s should appear in the specified OBS text source or in your browser,
 depending on your configuration.</p>
+</section>
 </section>
 </section>
 
@@ -145,8 +153,7 @@ depending on your configuration.</p>
 <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#for-windows-users-recommended">For Windows Users (Recommended)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#from-pypi-other-platforms">From PyPI (Other Platforms)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#running-the-program">Running the Program</a></li>
 </ul>
