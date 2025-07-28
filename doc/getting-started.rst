@@ -3,8 +3,13 @@ Getting Started
 
 This section covers the basic steps to get ``slidetextbridge`` running.
 
-For Windows Users (Recommended)
--------------------------------
+Installation
+------------
+
+Download a pre-built package
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is decommended for Windows users.
 
 If you are on Windows,
 the easiest way to get started is to download the latest ZIP file.
@@ -16,8 +21,8 @@ the easiest way to get started is to download the latest ZIP file.
 
 .. _release page: https://github.com/norihiro/slidetextbridge/releases
 
-From PyPI (Other Platforms)
----------------------------
+Download from PyPI (Other Platforms)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You may install from PyPI.
 
@@ -71,7 +76,8 @@ This setup reads text from the placeholder shapes of the current slide in PowerP
 Running the Program
 -------------------
 
-**Downloaded from the release page:**
+Downloaded the pre-built package
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   If you have downloaded the ZIP file from the release page,
 
@@ -79,7 +85,8 @@ Running the Program
   2. Double-click ``slidetextbridge.exe``.
   3. That's it, a console window will appear.
 
-**Downloaded from PyPI:**
+Downloaded from PyPI
+^^^^^^^^^^^^^^^^^^^^
 
   If you have installed using ``pip``,
 
