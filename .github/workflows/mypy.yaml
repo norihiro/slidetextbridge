@@ -2,6 +2,9 @@ name: Mypy
 
 on:
   push:
+    paths-ignore:
+      - '**.md'
+      - 'doc/**'
 
 jobs:
   mypy:
