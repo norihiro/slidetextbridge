@@ -39,11 +39,11 @@ function get_appropriate_ws_url(extra_url) {
 function text_to_html(text) {
     return text.replace(/[&<>"']/g, function (c) {
         return ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;',
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#39;",
         })[c];
     }).replace(/\\n/g, "<br/>");
 }
@@ -64,7 +64,7 @@ function connect_ws() {
     ws.onclose = function() {
         ws_failed += 1;
         setTimeout(connect_ws, ws_failed < 6 ? ws_failed * 500 : 3000);
-    }
+    };
 }
 
 document.addEventListener("DOMContentLoaded", function() {
