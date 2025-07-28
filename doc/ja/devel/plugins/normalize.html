@@ -13,7 +13,7 @@
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/translations.js?v=4755f45a"></script>
-    <script src="../_static/switcher.js?v=b6330db2"></script>
+    <script src="../_static/switcher.js?v=7580aa95"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="Filter Step: stdout" href="stdout.html" />
@@ -37,20 +37,18 @@
             
   <section id="filter-step-normalize">
 <h1>Filter Step: <cite>normalize</cite><a class="headerlink" href="#filter-step-normalize" title="Link to this heading">¶</a></h1>
-<p>This step normalizes Unicode text by <a class="reference external" href="https://docs.python.org/3/library/unicodedata.html#unicodedata.normalize">unicodedata.normalize</a>.</p>
+<p>このステップは <a class="reference external" href="https://docs.python.org/3/library/unicodedata.html#unicodedata.normalize">unicodedata.normalize</a> を使用してテキストを正規化します。</p>
 <ul class="simple">
 <li><p><strong>type: normalize</strong></p></li>
 </ul>
 <p><strong>パラメータ:</strong></p>
 <dl class="field-list simple">
-<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">form</span></code> (str, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">form</span></code> (string, 任意)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>形式を設定します。選択肢は <code class="docutils literal notranslate"><span class="pre">NFC</span></code>, <code class="docutils literal notranslate"><span class="pre">NFKC</span></code>, <code class="docutils literal notranslate"><span class="pre">NFD</span></code>, <code class="docutils literal notranslate"><span class="pre">NFKD</span></code> です。デフォルトは <code class="docutils literal notranslate"><span class="pre">NFKC</span></code> です。</p>
 </dd>
 </dl>
 <p><strong>説明:</strong></p>
-<p>In Japanese,
-there are various kana representations such as half-width and full-width, composition and decomposition for voiced and semi-voiced marks.
-Details of the normalization is listed in the table below.</p>
+<p>日本語では、半角や全角、濁音・半濁音記号の形式など様々な仮名の表記があります。具体的な正規化を以下の表に示します。</p>
 <table class="docutils align-default" id="id1">
 <caption><span class="caption-text">日本語の正規化</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
 <thead>
