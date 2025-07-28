@@ -22,7 +22,6 @@ Contents
    :caption: User Guide
 
    getting-started
-   configuration
-   plugins/index
+   reference
    troubleshooting
 
