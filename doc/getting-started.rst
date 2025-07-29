@@ -9,7 +9,7 @@ Installation
 Download a pre-built package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This is decommended for Windows users.
+This is recommended for Windows users.
 
 If you are on Windows,
 the easiest way to get started is to download the latest ZIP file.
