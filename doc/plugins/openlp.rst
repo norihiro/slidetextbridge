@@ -37,3 +37,31 @@ Description
 OpenLP has several types for service item.
 We will take the text from **Songs**, **Bibles**, **Custom Slides**.
 Other types such as **Presentations** and **Images** will be ignored.
+
+.. tip::
+
+  You may retrieve the title or the HTML by using :doc:`/plugins/jmespath`.
+
+  **Example to retrieve the title:**
+
+  .. code-block:: yaml
+     :emphasize-lines: 3,4
+
+      - type: openlp
+
+      - type: jmespath
+        filter: shapes[*].title
+
+  **Example to retrieve HTML:**
+
+  .. code-block:: yaml
+     :emphasize-lines: 3,4
+
+      - type: openlp
+
+      - type: jmespath
+        filter: shapes[*].html
+
+  The HTML will be accepted by `Pthread Text plugin`_ on OBS Studio.
+
+  .. _Pthread Text plugin: https://github.com/norihiro/obs-text-pthread
