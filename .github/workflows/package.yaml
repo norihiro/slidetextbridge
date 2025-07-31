@@ -54,16 +54,10 @@ jobs:
           cd dist
           $compress = @{
             Path = "slidetextbridge\*"
-            DestinationPath = "slidetextbridge.zip"
+            DestinationPath = "slidetextbridge-${{ env.tagName }}-Windows-x64.zip"
             Force = $true
           }
           Compress-Archive @compress
-
-      - name: rename
-        if: github.ref_type == 'tag'
-        shell: pwsh
-        run: |
-          Rename-Item -Path 'dist/slidetextbridge.zip' -NewName 'slidetextbridge-${{ env.tagName }}.zip'
 
       - run: |
           dist/slidetextbridge/slidetextbridge.exe -h
