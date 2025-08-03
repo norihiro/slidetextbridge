@@ -290,8 +290,6 @@ class TextFilteredSlide(base.SlideBase):
     'The slide class returned by the filters'
 
     def __init__(self, data=None, parent=None):
-        if isinstance(data, list):
-            data = {'shapes': data}
         super().__init__(data=data, parent=parent)
 
     def __str__(self):
