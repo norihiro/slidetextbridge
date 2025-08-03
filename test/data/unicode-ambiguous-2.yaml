@@ -1,0 +1,9 @@
+steps:
+  - type: stdin
+
+  - type: linebreak
+    ambiguous_char_width: 2
+    split_long_line: 16
+
+  - type: stdout
+    page_delimiter: "\n"

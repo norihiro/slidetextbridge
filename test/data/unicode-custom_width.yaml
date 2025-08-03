@@ -1,0 +1,11 @@
+steps:
+  - type: stdin
+
+  - type: linebreak
+    # ambiguous_char_width: 1 # default
+    custom_width:
+      'あ': 3
+      'か': 7
+    split_long_line: 10
+
+  - type: stdout
