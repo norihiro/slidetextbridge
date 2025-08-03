@@ -73,6 +73,18 @@ Ideal target languages are CJK (Chinese, Japanese, and Korean).</p>
 <dd class="field-odd"><p>Delimiter when joining short lines. Default is a space <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code>.</p>
 </dd>
 </dl>
+<p>These parameters controls calculation of character widths.</p>
+<dl class="field-list simple">
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">ambiguous_char_width</span></code> (int, optional)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Width for Unicode ambiguous characters. Default is <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+</dd>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">custom_width.*</span></code> (int, optional)<span class="colon">:</span></dt>
+<dd class="field-even"><p>Width for the specified character.</p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.3: </span>The parameter <code class="docutils literal notranslate"><span class="pre">ambiguous_char_width</span></code> and <code class="docutils literal notranslate"><span class="pre">custom_width</span></code>.</p>
+</div>
 <p><strong>Order of process:</strong></p>
 <p>The texts are processed in the order described below.</p>
 <ol class="arabic simple">
