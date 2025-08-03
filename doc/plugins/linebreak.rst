@@ -24,6 +24,13 @@ Ideal target languages are CJK (Chinese, Japanese, and Korean).
 :``joined_column_max`` (integer, optional): Threshold number when joining short lines. Default is ``0``, do not join.
 :``join_by`` (string, optional): Delimiter when joining short lines. Default is a space ``' '``.
 
+These parameters controls calculation of character widths.
+
+:``ambiguous_char_width`` (int, optional): Width for Unicode ambiguous characters. Default is ``1``.
+:``custom_width.*`` (int, optional): Width for the specified character.
+
+.. versionadded:: 0.3 The parameter ``ambiguous_char_width`` and ``custom_width``.
+
 **Order of process:**
 
 The texts are processed in the order described below.

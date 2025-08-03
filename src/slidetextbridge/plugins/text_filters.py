@@ -57,6 +57,8 @@ class TextLinebreakFilter(base.PluginBase):
         cfg.add_argment('split_nowrap_allow_overflow', type=bool, default=True)
         cfg.add_argment('joined_column_max', type=int, default=0)
         cfg.add_argment('join_by', type=str, default=' ')
+        cfg.add_argment('ambiguous_char_width', type=int, default=1)
+        cfg.add_argment('custom_width', type=dict, default=None)
         cfg.parse(data)
         return cfg
 
@@ -118,7 +120,7 @@ class TextLinebreakFilter(base.PluginBase):
             while ix < len(text):
                 was_cjk, is_cjk = is_cjk, False
                 c = text[ix]
-                n += self._count_text(c)
+                n += self._count_text(c, verbose=False)
                 allow_overflow = False
                 if c.isspace():
                     ix_space = ix
@@ -164,13 +166,24 @@ class TextLinebreakFilter(base.PluginBase):
                 yield text
                 break
 
-    def _count_text(self, text):
+    def _count_text(self, text, verbose=True):
         'Count CJK characters twice'
         if text.isascii():
             return len(text)
         n = 0
         for c in text:
-            n += 2 if _is_cjk_char(c) else 1
+            if self.cfg.custom_width and c in self.cfg.custom_width:
+                n += int(self.cfg.custom_width[c])
+            else:
+                w = unicodedata.east_asian_width(c)
+                if w in 'FW':
+                    n += 2
+                elif w == 'A':
+                    n += self.cfg.ambiguous_char_width # such as '\u2500'
+                else:
+                    n += 1
+        if verbose:
+            self.logger.debug('"%s": width is %d', text, n)
         return n
 
     async def update(self, slide, args):
