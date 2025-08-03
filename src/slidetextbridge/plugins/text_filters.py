@@ -114,7 +114,9 @@ class TextLinebreakFilter(base.PluginBase):
             ix_other = -1
             n = 0
             allow_overflow = False
+            is_cjk = False
             while ix < len(text):
+                was_cjk, is_cjk = is_cjk, False
                 c = text[ix]
                 n += self._count_text(c)
                 allow_overflow = False
@@ -124,6 +126,9 @@ class TextLinebreakFilter(base.PluginBase):
                     if self.cfg.split_nowrap_allow_overflow:
                         allow_overflow = True
                 elif _is_cjk_char(c):
+                    is_cjk = True
+                    ix_cjk = ix
+                elif was_cjk:
                     ix_cjk = ix
                 else:
                     ix_other = ix
