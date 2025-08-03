@@ -1,0 +1,12 @@
+steps:
+  - type: stdin
+
+  - type: normalize
+
+  - type: linebreak
+    split_long_line: 10
+    split_nowrap: "、。」』,."
+    joined_column_max: 8
+
+  - type: stdout
+    page_delimiter: "\n"
