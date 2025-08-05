@@ -42,7 +42,7 @@ function text_to_html(text) {
             "&": "&amp;",
             "<": "&lt;",
             ">": "&gt;",
-            "\"": "&quot;",
+            "\\"": "&quot;",
             "'": "&#39;",
         })[c];
     }).replace(/\\n/g, "<br/>");
