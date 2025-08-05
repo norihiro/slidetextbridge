@@ -22,12 +22,12 @@ class PluginBase:
     '''
 
     @staticmethod
-    def type_name():
+    def type_name(): # pragma: no cover
         'Return the name of the type'
-        return 'base'
+        raise NotImplementedError()
 
     @staticmethod
-    def config(data):
+    def config(data): # pragma: no cover
         'Return the config object'
         raise NotImplementedError()
 
