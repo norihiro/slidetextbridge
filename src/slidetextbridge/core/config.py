@@ -2,9 +2,10 @@
 Configuration data structure
 '''
 
+import types
 _LIB_KEYS = ('_location', )
 
-class ConfigBase():
+class ConfigBase(types.SimpleNamespace):
     '''
     Base class to hold configuration data
     '''
