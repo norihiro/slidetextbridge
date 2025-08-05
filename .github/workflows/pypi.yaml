@@ -25,7 +25,7 @@ jobs:
           . .venv-build/bin/activate
           pip install build
           python -m build
-          ls -l dist/
+          tar cvvf dist.tar dist
 
       - name: Test
         run: |
@@ -33,6 +33,11 @@ jobs:
           . .venv-test/bin/activate
           pip install ./dist/slidetextbridge-*.whl
           python -m unittest discover test/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.sha }}-dist
+          path: dist.tar
 
   publish:
     needs: build
@@ -47,14 +52,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build the package
-        run: |
-          python -m venv .venv-build
-          . .venv-build/bin/activate
-          pip install build
-          python -m build
-          ls -l dist/
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.sha }}-dist
 
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - run: |
+          tar xvf dist.tar
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
