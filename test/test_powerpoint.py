@@ -14,10 +14,10 @@ sys.modules['pywintypes'] = mock_pywintypes
 from slidetextbridge.plugins import powerpoint # pylint: disable=C0413
 from slidetextbridge.plugins import jmespath_filter
 
-def mock_shape(text, shape_type=14, name='unnamed'):
+def mock_shape(text, shape_type=14, name='unnamed', has_text_frame=True):
     shape = MagicMock()
 
-    shape.HasTextFrame = True
+    shape.HasTextFrame = has_text_frame
     shape.TextFrame = MagicMock()
     shape.TextFrame.TextRange = MagicMock()
     shape.TextFrame.TextRange.Text = text
@@ -93,6 +93,7 @@ class TestPowerPointCapture(unittest.IsolatedAsyncioTestCase):
                 mock_shape(text='a'),
                 mock_shape(text='b'),
                 mock_shape(text='line1\nline2'),
+                mock_shape(text='', has_text_frame=False),
         ]
         api_slide.Shapes[1].Type = 13 # Not a placeholder
 
