@@ -16,7 +16,7 @@ class TestImpressCapture(unittest.IsolatedAsyncioTestCase):
     def test_type_name(self):
         self.assertEqual(impress.ImpressCapture.type_name(), 'impress')
 
-    async def _test_loop_once(self, uno_shapes):
+    async def _test_loop(self, uno_shapes_list):
         ctx = MagicMock()
 
         uno_ctx = MagicMock()
@@ -39,25 +39,26 @@ class TestImpressCapture(unittest.IsolatedAsyncioTestCase):
         controller = MagicMock()
         presentation.getController.return_value = controller
 
-        uno_slide = MagicMock()
-        controller.getCurrentSlide.return_value = uno_slide
+        def _create_uno_slide(u):
+            uno_slide = MagicMock()
+            uno_slide.__iter__.return_value = u
+            return uno_slide
+        controller.getCurrentSlide.side_effect = [_create_uno_slide(u) for u in uno_shapes_list]
 
         cfg = impress.ImpressCapture.config({})
         obj = impress.ImpressCapture(ctx=ctx, cfg=cfg)
 
         with (patch('asyncio.sleep') as mock_sleep,
               patch('uno.getComponentContext') as MockGetComponentContext):
-            mock_sleep.return_value = None
+            mock_sleep.side_effect = [None] * (len(uno_shapes_list) -1) + [StopAsyncIteration]
             MockGetComponentContext.return_value = uno_ctx
 
             obj.emit = AsyncMock()
-            uno_slide.__iter__.return_value = uno_shapes
 
-            await obj._loop_once()
+            with self.assertRaises(StopAsyncIteration):
+                await obj._loop()
 
-            slide = obj.emit.call_args[0][0]
-
-            mock_sleep.assert_called_once()
+            slides = [x.args[0] for x in obj.emit.call_args_list]
 
         uno_ctx.ServiceManager.createInstanceWithContext.assert_called_once_with(
                 'com.sun.star.bridge.UnoUrlResolver', uno_ctx)
@@ -66,7 +67,11 @@ class TestImpressCapture(unittest.IsolatedAsyncioTestCase):
         uno_inst.ServiceManager.createInstanceWithContext.assert_called_once_with(
                 'com.sun.star.frame.Desktop', uno_inst)
 
-        return slide
+        return slides
+
+    async def _test_loop_once(self, uno_shapes):
+        slides = await self._test_loop(uno_shapes_list=[uno_shapes])
+        return slides[0]
 
     async def test_texts(self):
         shape1 = MagicMock()
@@ -102,6 +107,24 @@ class TestImpressCapture(unittest.IsolatedAsyncioTestCase):
 
         # cover to_texts()
         self.assertEqual(str(slide), 'text1\ntext2')
+
+    async def test_2_iterations(self):
+        shape1 = MagicMock()
+        shape1.Text.getString.return_value = 'text1'
+        shape2 = MagicMock()
+        shape2.Text.getString.return_value = 'text2'
+        uno_shapes = [shape1, shape2]
+
+        slide1, slide2 = await self._test_loop(uno_shapes_list = [
+            [shape1, shape2],
+            [shape2, shape1]
+        ])
+        uno_slide = MagicMock()
+        uno_slide.__iter__.return_value = uno_shapes
+
+        self.assertEqual(slide1.to_texts(), ['text1', 'text2'])
+        self.assertEqual(slide2.to_texts(), ['text2', 'text1'])
+
 
 if __name__ == "__main__":
     unittest.main()
