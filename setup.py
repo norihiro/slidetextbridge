@@ -18,6 +18,7 @@ setuptools.setup(
         long_description_content_type='text/markdown',
         package_dir={'': 'src'},
         packages=setuptools.find_packages(where='src'),
+        include_package_data=True,
         install_requires=requirements,
         python_requires='>=3.9',
         entry_points={

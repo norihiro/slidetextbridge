@@ -35,6 +35,7 @@ jobs:
           pip install .
           $PyInstallerArgs = @(
             '--name', 'slidetextbridge'
+            '--add-data', 'src/slidetextbridge/plugins/data:slidetextbridge/plugins/data'
             'src/slidetextbridge/core/main.py'
           )
           pyinstaller.exe @PyInstallerArgs
