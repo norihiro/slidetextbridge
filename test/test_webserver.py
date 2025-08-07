@@ -3,7 +3,7 @@ import logging
 from unittest.mock import MagicMock, patch, AsyncMock
 from aiohttp.test_utils import AioHTTPTestCase
 
-from slidetextbridge.plugins import webserver
+from slidetextbridge.plugins import webserver, base
 
 # https://docs.aiohttp.org/en/stable/testing.html#unittest
 
@@ -105,6 +105,16 @@ class TestWebServerEmitter(AioHTTPTestCase):
             await self.obj.update('updated text', None)
             self.assertEqual(await ws.receive_str(), 'pending text')
             self.assertEqual(await ws.receive_str(), 'updated text')
+
+    async def test_ws_shape_and_clear(self):
+        async with self.client.ws_connect('/ws/text') as ws:
+            # The SlideBase instance will be converted to a string.
+            await self.obj.update(base.SlideBase({'shapes': {'text': 'shape text'}}), None)
+            self.assertEqual(await ws.receive_str(), 'shape text')
+
+            # Also tests to clear the text.
+            await self.obj.update(None, None)
+            self.assertEqual(await ws.receive_str(), '')
 
 if __name__ == '__main__':
     unittest.main()
