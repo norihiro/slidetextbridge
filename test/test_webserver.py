@@ -36,15 +36,16 @@ class TestWebServerEmitter(AioHTTPTestCase):
         self.assertEqual(cfg.port, 8081)
 
     async def get_application(self):
+        self.obj = await self._create_mocked_obj(cfg_data={
+            'host': '192.0.2.3',
+            'port': 8081,
+        })
+        return self.obj.app
+
+    @staticmethod
+    async def _create_mocked_obj(cfg_data):
         ctx = MagicMock()
 
-        cfg_data = {
-                'host': '192.0.2.3',
-                'port': 8081,
-                'index_html': '<!-- index html -->',
-                'script_js': '/* script data */',
-                'style_css': '/* style data */',
-        }
         cfg = webserver.WebServerEmitter.config(cfg_data)
 
         mockAppRunner = MagicMock()
@@ -71,25 +72,13 @@ class TestWebServerEmitter(AioHTTPTestCase):
                 obj.cfg.host, obj.cfg.port)
         mockTCPSite.return_value.start.assert_called_once_with()
 
-        self.obj = obj
-        return obj.app
+        return obj
 
     async def test_get(self):
-
         async with self.client.request('GET', '/') as resp:
             self.assertEqual(resp.status, 200)
             text = await resp.text()
-            self.assertEqual(text, '<!-- index html -->')
-
-        async with self.client.request('GET', '/script.js') as resp:
-            self.assertEqual(resp.status, 200)
-            text = await resp.text()
-            self.assertEqual(text, '/* script data */')
-
-        async with self.client.request('GET', '/style.css') as resp:
-            self.assertEqual(resp.status, 200)
-            text = await resp.text()
-            self.assertEqual(text, '/* style data */')
+            self.assertIn('<html>', text)
 
     async def test_ws_text(self):
 
@@ -115,6 +104,36 @@ class TestWebServerEmitter(AioHTTPTestCase):
             # Also tests to clear the text.
             await self.obj.update(None, None)
             self.assertEqual(await ws.receive_str(), '')
+
+class TestWebServerEmitter_CustomContents(TestWebServerEmitter):
+
+    async def get_application(self):
+        self.obj = await self._create_mocked_obj(cfg_data={
+            'host': '192.0.2.3',
+            'port': 8081,
+            'index_html': '<!-- index html -->',
+            'script_js': '/* script data */',
+            'style_css': '/* style data */',
+        })
+        return self.obj.app
+
+    async def test_get(self):
+        async with self.client.request('GET', '/') as resp:
+            self.assertEqual(resp.status, 200)
+            text = await resp.text()
+            self.assertEqual(text, '<!-- index html -->')
+
+        async with self.client.request('GET', '/script.js') as resp:
+            self.assertEqual(resp.status, 200)
+            text = await resp.text()
+            self.assertEqual(text, '/* script data */')
+
+        async with self.client.request('GET', '/style.css') as resp:
+            self.assertEqual(resp.status, 200)
+            text = await resp.text()
+            self.assertEqual(text, '/* style data */')
+
+
 
 if __name__ == '__main__':
     unittest.main()

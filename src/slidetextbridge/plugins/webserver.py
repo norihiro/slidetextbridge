@@ -3,80 +3,39 @@ Send text through HTTP
 '''
 
 import logging
+import os
 from aiohttp import web
 from slidetextbridge.core import config
 from . import base
 
-_DEFAULT_INDEX_HTML = '''
-<!doctype html>
-<html>
-    <header>
-        <script src="{uri_script}"></script>
-        <link rel='stylesheet' href='{uri_style}' />
-    </header>
-    <body>
-        <div class='text' id='placeholder'>
-        </div>
-    </body>
-</html>
-'''.strip()
 
-_DEFAULT_SCRIPT_JS = '''
-function get_appropriate_ws_url(extra_url) {
-    var pcol;
-    var u = document.URL;
-    if (u.substring(0, 5) === "https") {
-        pcol = "wss://";
-        u = u.substr(8).split("/")[0];
-    } else {
-        pcol = "ws://";
-        if (u.substring(0, 4) === "http")
-            u = u.substr(7).split("/")[0];
-    }
-    return pcol + u + "/" + extra_url;
-}
+def _get_data_path(file):
+    module_dir = os.path.dirname(os.path.abspath(__file__))
+    return module_dir + '/data/webserver/' + file
 
-function text_to_html(text) {
-    return text.replace(/[&<>"']/g, function (c) {
-        return ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            "\\"": "&quot;",
-            "'": "&#39;",
-        })[c];
-    }).replace(/\\n/g, "<br/>");
-}
 
-let ws_failed = 0;
-function connect_ws() {
-    let url = get_appropriate_ws_url("ws/text");
-    console.log("Connecting to", url);
-    ws = new WebSocket(url);
-    ws.onmessage = function(msg) {
-        ws_failed = 0;
-        console.log("Received:", msg.data);
-        e = document.getElementById("placeholder");
-        h = text_to_html(msg.data);
-        console.log("HTML:", h);
-        e.innerHTML = h;
-    };
-    ws.onclose = function() {
-        ws_failed += 1;
-        setTimeout(connect_ws, ws_failed < 6 ? ws_failed * 500 : 3000);
-    };
-}
+class _GetHandler:
+    def __init__(self, content=None, path=None, content_type=None, logger=None):
+        if content:
+            self.content = content
+        elif path:
+            self.content = None
+            self.load(path)
+        elif logger: # pragma: no cover
+            logger.error('_GetHandler: Need path or content')
 
-document.addEventListener("DOMContentLoaded", function() {
-    connect_ws();
-});
-'''
+        self.content_type = content_type or 'text/html'
 
-_DEFAULT_STYLE_CSS = '''
-body {
-  font-family: sans-serif;
-}
-'''
+    def load(self, path):
+        'Load the content from the given path'
+        with open(path, encoding='utf-8') as fr:
+            self.content = fr.read()
+
+    async def handler(self, request):
+        'The handler compatible with aiohttp'
+        # pylint: disable=unused-argument
+        return web.Response(text=self.content, content_type=self.content_type)
+
 
 class WebServerEmitter(base.PluginBase):
     '''
@@ -96,9 +55,10 @@ class WebServerEmitter(base.PluginBase):
         cfg.add_argment('uri_index', type=str, default='/index.html')
         cfg.add_argment('uri_script', type=str, default='/script.js')
         cfg.add_argment('uri_style', type=str, default='/style.css')
-        cfg.add_argment('index_html', type=str, default=_DEFAULT_INDEX_HTML)
-        cfg.add_argment('script_js', type=str, default=_DEFAULT_SCRIPT_JS)
-        cfg.add_argment('style_css', type=str, default=_DEFAULT_STYLE_CSS)
+        cfg.add_argment('index_html', type=str, default='')
+        cfg.add_argment('script_js', type=str, default='')
+        cfg.add_argment('style_css', type=str, default='')
+        cfg.add_argment('theme', type=str, default='default')
         cfg.parse(data)
         return cfg
 
@@ -111,21 +71,11 @@ class WebServerEmitter(base.PluginBase):
         self.connect_to(cfg.src)
 
     def _fmt(self, text):
+        if not text:
+            return None
         return text \
                 .replace('{uri_script}', self.cfg.uri_script) \
                 .replace('{uri_style}', self.cfg.uri_style)
-
-    async def _handle_index(self, request):
-        # pylint: disable=unused-argument
-        return web.Response(text=self._fmt(self.cfg.index_html), content_type='text/html')
-
-    async def _handle_script(self, request):
-        # pylint: disable=unused-argument
-        return web.Response(text=self._fmt(self.cfg.script_js), content_type='text/javascript')
-
-    async def _handle_style(self, request):
-        # pylint: disable=unused-argument
-        return web.Response(text=self._fmt(self.cfg.style_css), content_type='text/css')
 
     async def _handle_ws(self, request):
         # pylint: disable=unused-argument
@@ -150,11 +100,29 @@ class WebServerEmitter(base.PluginBase):
 
     async def initialize(self):
         self.app = web.Application()
+        theme_dir = _get_data_path(self.cfg.theme) if self.cfg.theme else '.'
+        index_handler = _GetHandler(
+                content=self._fmt(self.cfg.index_html),
+                path=theme_dir + '/index.html',
+                logger=self.logger
+        )
+        script_handler = _GetHandler(
+                content=self._fmt(self.cfg.script_js),
+                path=theme_dir + '/script.js',
+                content_type='text/javascript',
+                logger=self.logger
+        )
+        style_handler = _GetHandler(
+                content=self._fmt(self.cfg.style_css),
+                path=theme_dir + '/style.css',
+                content_type='text/css',
+                logger=self.logger
+        )
         self.app.add_routes([
-            web.get('/', self._handle_index),
-            web.get(self.cfg.uri_index, self._handle_index),
-            web.get(self.cfg.uri_script, self._handle_script),
-            web.get(self.cfg.uri_style, self._handle_style),
+            web.get('/', index_handler.handler),
+            web.get(self.cfg.uri_index, index_handler.handler),
+            web.get(self.cfg.uri_script, script_handler.handler),
+            web.get(self.cfg.uri_style, style_handler.handler),
             web.get('/ws/text', self._handle_ws),
         ])
         runner = web.AppRunner(self.app)
