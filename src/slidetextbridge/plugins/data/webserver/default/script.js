@@ -28,12 +28,12 @@ let ws_failed = 0;
 function connect_ws() {
     let url = get_appropriate_ws_url("ws/text");
     console.log("Connecting to", url);
-    ws = new WebSocket(url);
+    let ws = new WebSocket(url);
     ws.onmessage = function(msg) {
         ws_failed = 0;
         console.log("Received:", msg.data);
-        e = document.getElementById("placeholder");
-        h = text_to_html(msg.data);
+        let e = document.getElementById("placeholder");
+        let h = text_to_html(msg.data);
         console.log("HTML:", h);
         e.innerHTML = h;
     };
