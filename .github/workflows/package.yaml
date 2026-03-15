@@ -81,7 +81,7 @@ jobs:
         with:
           name: ${{ env.tagName }}-windows
 
-      - uses: softprops/action-gh-release@aec2ec56f94eb8180ceec724245f64ef008b89f5 # v2.4.0
+      - uses: softprops/action-gh-release@e4df4b2d92417e5081232ae92aa2229baadf18fe # v2.5.1
         with:
           draft: true
           files: slidetextbridge*.zip
