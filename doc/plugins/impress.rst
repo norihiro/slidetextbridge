@@ -8,7 +8,7 @@ It is designed to be an input source, meaning it's usually the first step in the
 
 **Parameters:**
 
-:``host`` (string, optional): Set the host name communicate with. Default is ``localhost``.
+:``host`` (string, optional): Set the host name to communicate with. Default is ``localhost``.
 :``port`` (integer, optional): Set the port number that LibreOffice is listening on. Default is ``2002``.
 :``pipe_name`` (string, optional): Set the pipe name that LibreOffice is waiting. Default is unset.
 :``poll_wait_time`` (float, optional): Set the wait time for each polling in seconds. 0.1 seconds by default.

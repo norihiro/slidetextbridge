@@ -1,5 +1,5 @@
-Filter Step: `stdin`
-====================
+Input Step: `stdin`
+===================
 
 This step reads text from console.
 An empty line is a separator for slides.

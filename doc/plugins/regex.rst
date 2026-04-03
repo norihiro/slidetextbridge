@@ -29,4 +29,4 @@ This step filters lines.
 	     - p: '\<Those\>'
 	       r: These
 
-     - type: print
+     - type: stdout

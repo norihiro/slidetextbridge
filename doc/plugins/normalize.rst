@@ -61,4 +61,4 @@ Details of the normalization is listed in the table below.
 
      - type: normalize
 
-     - type: print
+     - type: stdout

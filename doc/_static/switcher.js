@@ -86,7 +86,7 @@ async function navigate_to_first_existing(urls) {
 				return url;
 			}
 		} catch (err) {
-			console.error(`Error to fetch '${url}'; ${err}`);
+			console.error(`Error fetching '${url}'; ${err}`);
 		}
 	}
 }

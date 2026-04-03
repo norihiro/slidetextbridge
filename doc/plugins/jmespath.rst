@@ -19,11 +19,11 @@ The filter engine is powered by JMESPath.
        placeholder_only: false
 
      # This is useful to see the structure of the shape data
-     - type: print
+     - type: stdout
        json: true
 
      # This step selects texts whose size is 28 or bigger
      - type: jmespath
        filter: shapes[?text_frame.text_range.font.size>=`28`]
 
-     - type: print
+     - type: stdout

@@ -7,11 +7,11 @@ This step helps to adjust line breaks.
 
 **Parameters:**
 
-These parameters control how to concatinate shapes and lines.
+These parameters control how to concatenate shapes and lines.
 
-:``shape_delimiter`` (string, optional): Delimiter when concatinating shapes. Default is ``\n``.
-:``line_delimiter`` (string, optional): Delimiter when concatinating lines in a shape. Default is ``\n``.
-:``strip`` (boolean, optional): Before concatinating lines, strip leading and trailing spaces from each line. Default is true.
+:``shape_delimiter`` (string, optional): Delimiter when concatenating shapes. Default is ``\n``.
+:``line_delimiter`` (string, optional): Delimiter when concatenating lines in a shape. Default is ``\n``.
+:``strip`` (boolean, optional): Before concatenating lines, strip leading and trailing spaces from each line. Default is true.
 
 For example, if you want to get multiple lines into one, set ``line_delimiter`` to ``' '`` (just a space).
 
@@ -24,10 +24,10 @@ Ideal target languages are CJK (Chinese, Japanese, and Korean).
 :``joined_column_max`` (integer, optional): Threshold number when joining short lines. Default is ``0``, do not join.
 :``join_by`` (string, optional): Delimiter when joining short lines. Default is a space ``' '``.
 
-These parameters controls calculation of character widths.
+These parameters control calculation of character widths.
 
-:``ambiguous_char_width`` (int, optional): Width for Unicode ambiguous characters. Default is ``1``.
-:``custom_width.*`` (int, optional): Width for the specified character.
+:``ambiguous_char_width`` (integer, optional): Width for Unicode ambiguous characters. Default is ``1``.
+:``custom_width.*`` (integer, optional): Width for the specified character.
 
 .. versionadded:: 0.3 The parameter ``ambiguous_char_width`` and ``custom_width``.
 

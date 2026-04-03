@@ -22,6 +22,6 @@ Make sure OBS Studio version 28.0.0 or later so that obs-websocket is pre-instal
 
      # This step sends the text to the 'Live Text' source in OBS.
      - type: obsws
-       url: 'ws://localhost:4555/'
+       url: 'ws://localhost:4455/'
        password: 'your_secret_password'
        source_name: 'Text (GDI+)'

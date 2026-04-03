@@ -6,7 +6,7 @@ The configuration file is a YAML document that defines the ``steps`` of the text
 Top-Level Structure
 -------------------
 
-The root of the configuration must be a ``steps`` key, which holds a list of step objects.
+The root of the configuration must contain a ``steps`` key, which holds a list of step objects.
 
 .. code-block:: yaml
 
