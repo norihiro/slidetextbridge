@@ -10,10 +10,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
     <script src="../_static/documentation_options.js?v=4eb6406d"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/translations.js?v=4755f45a"></script>
-    <script src="../_static/switcher.js?v=7580aa95"></script>
+    <script src="../_static/switcher.js?v=d44bce98"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
     <link rel="next" title="Filter Step: regex" href="regex.html" />
@@ -42,20 +42,20 @@
 <li><p><strong>type: linebreak</strong></p></li>
 </ul>
 <p><strong>パラメータ:</strong></p>
-<p>以下のパラメータは、図形や行を結合する方法を制御します。</p>
+<p>These parameters control how to concatenate shapes and lines.</p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">shape_delimiter</span></code> (string, 任意)<span class="colon">:</span></dt>
-<dd class="field-odd"><p>図形の間の区切り文字を設定します。デフォルトは <code class="docutils literal notranslate"><span class="pre">\n</span></code> です。</p>
+<dd class="field-odd"><p>Delimiter when concatenating shapes. Default is <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
 </dd>
 <dt class="field-even"><code class="docutils literal notranslate"><span class="pre">line_delimiter</span></code> (string, 任意)<span class="colon">:</span></dt>
-<dd class="field-even"><p>図形内の行の間の区切り文字を設定します。デフォルトは <code class="docutils literal notranslate"><span class="pre">\n</span></code> です。</p>
+<dd class="field-even"><p>Delimiter when concatenating lines in a shape. Default is <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
 </dd>
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">strip</span></code> (boolean, 任意)<span class="colon">:</span></dt>
-<dd class="field-odd"><p>行を結合する前に、各行の先頭と末尾のスペースを取り除きます。デフォルトは <code class="docutils literal notranslate"><span class="pre">true</span></code> です。</p>
+<dd class="field-odd"><p>Before concatenating lines, strip leading and trailing spaces from each line. Default is true.</p>
 </dd>
 </dl>
 <p>例えば、複数の行を1つにしたい場合は、 <code class="docutils literal notranslate"><span class="pre">line_delimiter</span></code> を <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code> (単なるスペース) に設定してください。</p>
-<p>以下のパラメータは、行の分割や結合を制御、すなわち改行位置の調整を行います。CJK(中国語、日本語、韓国語)に最適です。</p>
+<p>以下のパラメータは、行の分割や結合を制御、すなわち改行位置の調整を行います。CJK (中国語、日本語、韓国語) に最適です。</p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">split_long_line</span></code> (integer, 任意)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>長い行を分割する際のしきい値。デフォルトは <code class="docutils literal notranslate"><span class="pre">0</span></code> で、分割を行いません。</p>
@@ -73,17 +73,17 @@
 <dd class="field-odd"><p>短い行を結合する際の区切り文字。デフォルトは <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code> です。</p>
 </dd>
 </dl>
-<p>以下のパラメータは、文字幅の計算方法を調整します。</p>
+<p>These parameters control calculation of character widths.</p>
 <dl class="field-list simple">
-<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">ambiguous_char_width</span></code> (int, optional)<span class="colon">:</span></dt>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">ambiguous_char_width</span></code> (integer, optional)<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Width for Unicode ambiguous characters. Default is <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
 </dd>
-<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">custom_width.*</span></code> (int, optional)<span class="colon">:</span></dt>
-<dd class="field-even"><p>Width for the specified character.</p>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">custom_width.*</span></code> (integer, optional)<span class="colon">:</span></dt>
+<dd class="field-even"><p>各文字の幅を設定します。</p>
 </dd>
 </dl>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 0.3: </span>The parameter <code class="docutils literal notranslate"><span class="pre">ambiguous_char_width</span></code> and <code class="docutils literal notranslate"><span class="pre">custom_width</span></code>.</p>
+<p><span class="versionmodified added">Added in version 0.3: </span><code class="docutils literal notranslate"><span class="pre">ambiguous_char_width</span></code> と <code class="docutils literal notranslate"><span class="pre">custom_width</span></code></p>
 </div>
 <p><strong>処理の順序:</strong></p>
 <p>本文は以下の順序で処理されます。</p>
@@ -184,7 +184,7 @@
       
       
       
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
